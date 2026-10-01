@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestão de Requisições - Hortifruti</title>
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-hover: #1b5e20;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-color: #e0e0e0;
+      --accent-orange: #ed6c02;
+      --accent-blue: #0288d1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    /* Navegação por Abas */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 5px;
+    }
+
+    .nav-tab {
+      padding: 10px 20px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 5px 5px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      color: #555;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .badge {
+      background: var(--accent-orange);
+      color: white;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+    }
+
+    /* Conteúdo das Abas */
+    .tab-content {
+      display: none;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Formulários e Filtros */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .form-control {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+
+    /* Tabelas */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    input.qty-input {
+      width: 70px;
+      padding: 4px;
+      text-align: center;
+    }
+
+    /* Botões */
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-warning {
+      background-color: var(--accent-orange);
+      color: white;
+    }
+
+    .btn-info {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #d32f2f;
+      color: white;
+    }
+
+    /* Cards de Requisições */
+    .req-card {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #fafafa;
+    }
+
+    .req-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .status-badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .status-PENDENTE { background: #ffe0b2; color: #e65100; }
+    .status-APROVADO { background: #c8e6c9; color: #2e7d32; }
+    .status-CONCLUIDO { background: #bbdefb; color: #1565c0; }
+    .status-REJEITADO { background: #ffcdd2; color: #c62828; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Gestão de Requisições de Hortifruti</h1>
+    <span id="dataAtualHeader"></span>
+  </header>
+
+  <!-- Navegação por Abas -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="tab-solicitante">📋 Solicitante (Setores)</button>
+    <button class="nav-tab" data-tab="tab-chef">👨‍🍳 Aprovação Chef <span class="badge" id="badgeChef">0</span></button>
+    <button class="nav-tab" data-tab="tab-secretaria">📂 Secretaria & Histórico <span class="badge" id="badgeSecretaria">0</span></button>
+    <button class="nav-tab" data-tab="tab-cadastros">⚙️ Cadastros & Valores</button>
+  </div>
+
+  <!-- ABA 1: SOLICITANTE -->
+  <div id="tab-solicitante" class="tab-content active">
+    <h2>Nova Requisição de Compra</h2>
+    <form id="formSolicitante">
+      <div class="form-row" style="margin-top: 15px;">
+        <div class="form-control">
+          <label for="solSetor">Setor Solicitante:</label>
+          <select id="solSetor" required>
+            <option value="">Selecione o setor...</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label for="solData">Data da Solicitacao:</label>
+          <input type="date" id="solData" required>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 15px;">
+        <label>Filtro Rápido de Produtos:</label>
+        <input type="text" id="filtroProdutoSolicitante" placeholder="Digite o nome do produto para filtrar...">
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Produto</th>
+              <th>Unidade</th>
+              <th>Preço Un.</th>
+              <th>Estoque</th>
+              <th>Hóspedes</th>
+              <th>Refeitório</th>
+              <th>Cambusa</th>
+              <th>Qtd. Total</th>
+              <th>Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody id="tbodySolicitante">
+            <!-- Linhas geradas dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group" style="margin-top: 15px;">
+        <label for="solObs">Observações Gerais:</label>
+        <textarea id="solObs" rows="2" placeholder="Alguma especificação especial para esta requisição..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Enviar Requisição ao Chef</button>
+    </form>
+  </div>
+
+  <!-- ABA 2: APROVAÇÃO CHEF -->
+  <div id="tab-chef" class="tab-content">
+    <h2>Painel de Aprovação do Chef</h2>
+    <p style="color: #666; margin-bottom: 15px;">Revise as quantidades solicitadas pelos setores antes de enviar à Secretaria.</p>
+    <div id="listaAprovacaoChef">
+      <!-- Cards de requisições pendentes -->
+    </div>
+  </div>
+
+  <!-- ABA 3: SECRETARIA & HISTÓRICO -->
+  <div id="tab-secretaria" class="tab-content">
+    <h2>Histórico & Secretaria</h2>
+    
+    <div class="form-row" style="margin-bottom: 15px;">
+      <div class="form-control">
+        <label>Filtrar por Setor:</label>
+        <select id="filtroHistSetor">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label>Filtrar por Status:</label>
+        <select id="filtroHistStatus">
+          <option value="">Todos</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="APROVADO">Aprovado pelo Chef</option>
+          <option value="CONCLUIDO">Concluído (Nº Oficial)</option>
+          <option value="REJEITADO">Rejeitado</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="listaHistorico">
+      <!-- Histórico de solicitações -->
+    </div>
+  </div>
+
+  <!-- ABA 4: CADASTROS & VALORES -->
+  <div id="tab-cadastros" class="tab-content">
+    <h2>Gestão de Produtos & Setores</h2>
+    
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+      <!-- Gerenciar Setores -->
+      <div style="flex: 1; min-width: 280px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
+        <h3>Cadastrar Novo Setor</h3>
+        <div class="form-group" style="margin-top: 10px;">
+          <input type="text" id="novoSetorNome" placeholder="Nome do Setor">
+        </div>
+        <button class="btn btn-primary" onclick="adicionarSetor()">Adicionar Setor</button>
+        
+        <h4 style="margin-top: 20px;">Setores Existentes</h4>
+        <ul id="listaSetoresCadastrados" style="margin-top: 10px; padding-left: 20px;">
+          <!-- Lista de setores -->
+        </ul>
+      </div>
+
+      <!-- Gerenciar Produtos e Preços -->
+      <div style="flex: 2; min-width: 320px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
+        <h3>Cadastrar / Editar Preço de Produtos</h3>
+        <div class="form-row" style="margin-top: 10px;">
+          <div class="form-control">
+            <input type="text" id="cadCodigo" placeholder="Código">
+          </div>
+          <div class="form-control">
+            <input type="text" id="cadNome" placeholder="Nome do Produto">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top: 10px;">
+          <div class="form-control">
+            <input type="text" id="cadUnidade" placeholder="Unidade (Ex: KG, CX, UN)">
+          </div>
+          <div class="form-control">
+            <input type="number" step="0.01" id="cadPreco" placeholder="Preço Unitário (R$)">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 10px;" onclick="salvarProduto()">Salvar Produto</button>
+
+        <h4 style="margin-top: 20px;">Lista Geral de Produtos</h4>
+        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Unidade</th>
+                <th>Preço Unitário (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyCadProdutos">
+              <!-- Lista de Produtos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
