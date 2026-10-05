@@ -328,7 +328,6 @@
       width: auto;
     }
 
-    /* ESTILOS DO DASHBOARD E KPIS */
     .kpi-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -446,7 +445,7 @@
     <div id="listaAprovacaoChef"></div>
   </div>
 
-  <!-- ABA 3: SECRETARIA (Operacional e Limpa) -->
+  <!-- ABA 3: SECRETARIA -->
   <div id="tab-secretaria" class="tab-content">
     <h2>Histórico & Lançamentos Operacionais</h2>
     
@@ -472,11 +471,10 @@
     <div id="listaHistorico"></div>
   </div>
 
-  <!-- ABA 4: DASHBOARD & INDICADORES (Visão Estratégica) -->
+  <!-- ABA 4: DASHBOARD -->
   <div id="tab-dashboard" class="tab-content">
     <h2>Dashboard & Indicadores Estratégicos</h2>
     
-    <!-- Filtros Globais do Dashboard -->
     <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 15px; margin-bottom: 20px;">
       <div class="form-control">
         <label for="dashFiltroPeriodo">Período:</label>
@@ -494,7 +492,6 @@
       </div>
     </div>
 
-    <!-- Topo: Cartões de Resumo (KPIs) -->
     <div class="kpi-container">
       <div class="kpi-card" style="border-left-color: #0288d1;">
         <h4>Total de Requisições</h4>
@@ -514,7 +511,6 @@
       </div>
     </div>
 
-    <!-- Corpo: Gráficos Recomendados -->
     <div class="charts-grid">
       <div class="chart-card">
         <h3>Evolução de Gastos</h3>
@@ -535,12 +531,11 @@
     </div>
   </div>
 
-  <!-- ABA 5: CADASTROS & VALORES -->
+  <!-- ABA 5: CADASTROS -->
   <div id="tab-cadastros" class="tab-content">
     <h2>Gestão de Produtos & Setores</h2>
     
     <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
-      <!-- Gerenciar Setores -->
       <div style="flex: 1; min-width: 280px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
         <h3>Cadastrar Novo Setor</h3>
         <div class="form-group" style="margin-top: 10px;">
@@ -552,7 +547,6 @@
         <ul id="listaSetoresCadastrados" class="setores-grid"></ul>
       </div>
 
-      <!-- Gerenciar Produtos e Vinculação -->
       <div style="flex: 2; min-width: 320px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
         <h3>Cadastrar / Editar Produto e Departamentos</h3>
         <input type="hidden" id="cadCodigoOriginal">
@@ -665,7 +659,6 @@
     let produtos = JSON.parse(localStorage.getItem('sys_produtos')) || produtosBase;
     let solicitacoes = JSON.parse(localStorage.getItem('sys_solicitacoes')) || [];
 
-    // Instâncias de Gráficos
     let chartEvolucao = null;
     let chartSetores = null;
     let chartProdutos = null;
@@ -696,7 +689,6 @@
       document.getElementById('filtroHistSetor').addEventListener('change', renderHistorico);
       document.getElementById('filtroHistStatus').addEventListener('change', renderHistorico);
 
-      // Eventos Dashboard
       document.getElementById('dashFiltroPeriodo').addEventListener('change', renderDashboard);
       document.getElementById('dashFiltroSetor').addEventListener('change', renderDashboard);
     });
@@ -728,18 +720,6 @@
 
       const setorSelecionado = document.getElementById('solSetor').value;
 
-      if (!setorSelecionado) {
-        thead.innerHTML = `
-          <tr>
-            <th>Código</th><th>Produto</th><th>Unidade</th><th>Preço Un.</th>
-            <th>Estoque</th><th>Hóspedes</th><th>Refeitório</th><th>Cambusa</th>
-            <th>Qtd. Total</th><th>Total (R$)</th>
-          </tr>
-        `;
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #777;">Por favor, selecione um setor no campo acima para carregar o catálogo de produtos correspondente.</td></tr>';
-        return;
-      }
-
       thead.innerHTML = `
         <tr>
           <th>Código</th><th>Produto</th><th>Unidade</th><th>Preço Un.</th>
@@ -747,6 +727,11 @@
           <th>Qtd. Total</th><th>Total (R$)</th>
         </tr>
       `;
+
+      if (!setorSelecionado) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #777;">Por favor, selecione um setor no campo acima para carregar o catálogo de produtos correspondente.</td></tr>';
+        return;
+      }
 
       const produtosFiltrados = produtos.filter(p => p.departamentos && p.departamentos.includes(setorSelecionado));
 
@@ -784,13 +769,13 @@
         input.addEventListener('input', function() {
           const tr = this.closest('tr');
           const preco = parseFloat(tr.dataset.preco) || 0;
-
           const est = parseFloat(tr.querySelector('.input-est').value) || 0;
           const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
           
-          const total = Math.max(0, (hosp + ref + camb) - est);
+          const totalCalculado = (hosp + ref + camb) - est;
+          const total = Math.max(0, totalCalculado);
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
           tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
         });
@@ -991,7 +976,6 @@
       }
     }
 
-    /* RENDER HISTÓRICO - LIMPO E OPERACIONAL (SEM GRÁFICOS) */
     function renderHistorico() {
       const container = document.getElementById('listaHistorico');
       container.innerHTML = '';
@@ -1006,7 +990,7 @@
       });
 
       if (filtrados.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenum registro encontrado.</p>';
+        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhum registro encontrado.</p>';
         return;
       }
 
@@ -1134,7 +1118,6 @@
       document.body.removeChild(link);
     }
 
-    /* RENDER DASHBOARD COMPLETO (KPIs + FILTROS + 4 GRÁFICOS) */
     function renderDashboard() {
       const periodo = document.getElementById('dashFiltroPeriodo').value;
       const setorFiltro = document.getElementById('dashFiltroSetor').value;
@@ -1143,14 +1126,10 @@
       const mesAtual = hoje.getMonth();
       const anoAtual = hoje.getFullYear();
 
-      // Filtragem dos Dados
       let reqsFiltradas = solicitacoes.filter(req => {
         const reqData = new Date(req.data + 'T00:00:00');
-        
-        // Filtro por Setor
         if (setorFiltro && req.setor !== setorFiltro) return false;
 
-        // Filtro por Período
         if (periodo === 'mes') {
           return reqData.getMonth() === mesAtual && reqData.getFullYear() === anoAtual;
         } else if (periodo === '3meses') {
@@ -1158,10 +1137,9 @@
           tresMesesAtras.setMonth(tresMesesAtras.getMonth() - 3);
           return reqData >= tresMesesAtras;
         }
-        return true; // tudo
+        return true;
       });
 
-      // Cálculo dos KPIs
       const totalReq = reqsFiltradas.length;
       let gastoTotal = 0;
       const contagemSetores = {};
@@ -1179,8 +1157,6 @@
           req.itens.forEach(i => {
             const totalItem = i.qtdAprovada * parseFloat(i.preco || 0);
             custoReq += totalItem;
-
-            // Top Produtos
             produtosQtd[i.nome] = (produtosQtd[i.nome] || 0) + i.qtdAprovada;
           });
 
@@ -1192,7 +1168,6 @@
 
       const ticketMedio = totalReq > 0 ? (gastoTotal / totalReq) : 0;
 
-      // Descobrir Setor Mais Demandante
       let setorTop = '-';
       let maxPed = 0;
       for (const [s, count] of Object.entries(contagemSetores)) {
@@ -1202,13 +1177,11 @@
         }
       }
 
-      // Atualiza HTML dos KPIs
       document.getElementById('kpiTotalReq').textContent = totalReq;
       document.getElementById('kpiGastoTotal').textContent = `R$ ${gastoTotal.toFixed(2)}`;
       document.getElementById('kpiTicketMedio').textContent = `R$ ${ticketMedio.toFixed(2)}`;
       document.getElementById('kpiSetorTop').textContent = setorTop;
 
-      // 1. Gráfico de Evolução de Gastos (Linha)
       const datasOrdenadas = Object.keys(gastosPorDia).sort();
       const valoresEvolucao = datasOrdenadas.map(d => gastosPorDia[d]);
 
@@ -1229,7 +1202,6 @@
         options: { responsive: true }
       });
 
-      // 2. Gráfico Gastos por Setor (Barras Horizontais)
       const labelsSetores = Object.keys(gastosPorSetor);
       const valoresSetores = Object.values(gastosPorSetor);
 
@@ -1244,13 +1216,9 @@
             backgroundColor: '#0288d1'
           }]
         },
-        options: {
-          indexAxis: 'y',
-          responsive: true
-        }
+        options: { indexAxis: 'y', responsive: true }
       });
 
-      // 3. Top 10 Produtos Mais Solicitados
       const topProdutosArray = Object.entries(produtosQtd)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
@@ -1272,7 +1240,6 @@
         options: { responsive: true }
       });
 
-      // 4. Status das Solicitações (Rosca / Pizza)
       if (chartStatus) chartStatus.destroy();
       chartStatus = new Chart(document.getElementById('chartStatusReq'), {
         type: 'doughnut',
@@ -1449,7 +1416,6 @@
       document.getElementById('badgeSecretaria').textContent = pendentesSec;
     }
 
-    // Navegação por Abas
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
