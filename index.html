@@ -45,13 +45,13 @@
       font-size: 1.5rem;
     }
 
-    /* Navegação por Abas */
     .nav-tabs {
       display: flex;
       gap: 10px;
       margin-bottom: 20px;
       border-bottom: 2px solid var(--border-color);
       padding-bottom: 5px;
+      flex-wrap: wrap;
     }
 
     .nav-tab {
@@ -81,7 +81,48 @@
       font-size: 0.8rem;
     }
 
-    /* Conteúdo das Abas */
+    .setores-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .setor-chip {
+      background-color: #f0f4f8;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-remove-setor {
+      background: none;
+      border: none;
+      color: #d32f2f;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      line-height: 1;
+      padding: 2px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-remove-setor:hover {
+      background-color: #ffebee;
+    }
+
     .tab-content {
       display: none;
       background: var(--card-bg);
@@ -94,7 +135,6 @@
       display: block;
     }
 
-    /* Formulários e Filtros */
     .form-group {
       margin-bottom: 15px;
     }
@@ -125,7 +165,6 @@
       font-size: 0.95rem;
     }
 
-    /* Tabelas */
     .table-responsive {
       overflow-x: auto;
       margin-top: 15px;
@@ -158,7 +197,6 @@
       text-align: center;
     }
 
-    /* Botões */
     .btn {
       padding: 8px 16px;
       border: none;
@@ -166,6 +204,11 @@
       cursor: pointer;
       font-weight: bold;
       transition: background 0.2s;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.8rem;
     }
 
     .btn-primary {
@@ -177,13 +220,13 @@
       background-color: var(--primary-hover);
     }
 
-    .btn-warning {
-      background-color: var(--accent-orange);
+    .btn-info {
+      background-color: var(--accent-blue);
       color: white;
     }
 
-    .btn-info {
-      background-color: var(--accent-blue);
+    .btn-success {
+      background-color: #2e7d32;
       color: white;
     }
 
@@ -192,28 +235,67 @@
       color: white;
     }
 
-    /* Cards de Requisições */
     .req-card {
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .req-header-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: #f8f9fa;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .req-header-toggle:hover {
+      background: #f0f4f8;
+    }
+
+    .req-summary-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .req-summary-info strong {
+      color: #2c3e50;
+    }
+
+    .req-body {
+      display: none;
+      padding: 15px 18px;
+      border-top: 1px solid var(--border-color);
       background: #fafafa;
     }
 
-    .req-header {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-      font-weight: bold;
+    .req-card.open .req-body {
+      display: block;
+    }
+
+    .accordion-icon {
+      font-size: 0.85rem;
+      transition: transform 0.3s;
+      color: #666;
+    }
+
+    .req-card.open .accordion-icon {
+      transform: rotate(180deg);
     }
 
     .status-badge {
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
       text-transform: uppercase;
     }
 
@@ -221,21 +303,102 @@
     .status-APROVADO { background: #c8e6c9; color: #2e7d32; }
     .status-CONCLUIDO { background: #bbdefb; color: #1565c0; }
     .status-REJEITADO { background: #ffcdd2; color: #c62828; }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      width: 45%;
+    }
+
+    .checkbox-item input {
+      width: auto;
+    }
+
+    /* ESTILOS DO DASHBOARD E KPIS */
+    .kpi-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      padding: 15px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .kpi-card h4 {
+      font-size: 0.85rem;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .kpi-card .kpi-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 20px;
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .chart-card h3 {
+      font-size: 1rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Gestão de Requisições de Hortifruti</h1>
-    <span id="dataAtualHeader"></span>
+    <h1>Gestão de Requisições por Departamento</h1>
   </header>
 
-  <!-- Navegação por Abas -->
   <div class="nav-tabs">
     <button class="nav-tab active" data-tab="tab-solicitante">📋 Solicitante (Setores)</button>
     <button class="nav-tab" data-tab="tab-chef">👨‍🍳 Aprovação Chef <span class="badge" id="badgeChef">0</span></button>
     <button class="nav-tab" data-tab="tab-secretaria">📂 Secretaria & Histórico <span class="badge" id="badgeSecretaria">0</span></button>
-    <button class="nav-tab" data-tab="tab-cadastros">⚙️ Cadastros & Valores</button>
+    <button class="nav-tab" data-tab="tab-dashboard">📊 Dashboard & Indicadores</button>
+    <button class="nav-tab" data-tab="tab-cadastros">⚙ Cadastros & Valores</button>
   </div>
 
   <!-- ABA 1: SOLICITANTE -->
@@ -250,35 +413,20 @@
           </select>
         </div>
         <div class="form-control">
-          <label for="solData">Data da Solicitacao:</label>
+          <label for="solData">Data da Solicitação:</label>
           <input type="date" id="solData" required>
         </div>
       </div>
 
       <div class="form-group" style="margin-top: 15px;">
-        <label for="filtroProdutoSolicitante">Filtro Rápido de Produtos:</label>
+        <label for="filtroProdutoSolicitante">Filtro Rápido de Produtos do Setor:</label>
         <input type="text" id="filtroProdutoSolicitante" placeholder="Digite o nome do produto para filtrar...">
       </div>
 
       <div class="table-responsive">
         <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Produto</th>
-              <th>Unidade</th>
-              <th>Preço Un.</th>
-              <th>Estoque</th>
-              <th>Hóspedes</th>
-              <th>Refeitório</th>
-              <th>Cambusa</th>
-              <th>Qtd. Total</th>
-              <th>Total (R$)</th>
-            </tr>
-          </thead>
-          <tbody id="tbodySolicitante">
-            <!-- Linhas geradas dinamicamente via JS -->
-          </tbody>
+          <thead id="theadSolicitante"></thead>
+          <tbody id="tbodySolicitante"></tbody>
         </table>
       </div>
 
@@ -294,21 +442,19 @@
   <!-- ABA 2: APROVAÇÃO CHEF -->
   <div id="tab-chef" class="tab-content">
     <h2>Painel de Aprovação do Chef</h2>
-    <p style="color: #666; margin-bottom: 15px;">Revise as quantidades solicitadas pelos setores antes de enviar à Secretaria.</p>
-    <div id="listaAprovacaoChef">
-      <!-- Cards de requisições pendentes -->
-    </div>
+    <p style="color: #666; margin-bottom: 15px;">Clique em uma requisição para expandir e revisar as quantidades e valores.</p>
+    <div id="listaAprovacaoChef"></div>
   </div>
 
-  <!-- ABA 3: SECRETARIA & HISTÓRICO -->
+  <!-- ABA 3: SECRETARIA (Operacional e Limpa) -->
   <div id="tab-secretaria" class="tab-content">
-    <h2>Histórico & Secretaria</h2>
+    <h2>Histórico & Lançamentos Operacionais</h2>
     
-    <div class="form-row" style="margin-bottom: 15px;">
+    <div class="form-row" style="margin-bottom: 20px; margin-top: 15px;">
       <div class="form-control">
         <label for="filtroHistSetor">Filtrar por Setor:</label>
         <select id="filtroHistSetor">
-          <option value="">Todos</option>
+          <option value="">Todos os Setores</option>
         </select>
       </div>
       <div class="form-control">
@@ -323,12 +469,73 @@
       </div>
     </div>
 
-    <div id="listaHistorico">
-      <!-- Histórico de solicitações -->
+    <div id="listaHistorico"></div>
+  </div>
+
+  <!-- ABA 4: DASHBOARD & INDICADORES (Visão Estratégica) -->
+  <div id="tab-dashboard" class="tab-content">
+    <h2>Dashboard & Indicadores Estratégicos</h2>
+    
+    <!-- Filtros Globais do Dashboard -->
+    <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 15px; margin-bottom: 20px;">
+      <div class="form-control">
+        <label for="dashFiltroPeriodo">Período:</label>
+        <select id="dashFiltroPeriodo">
+          <option value="mes">Este Mês</option>
+          <option value="3meses">Últimos 3 Meses</option>
+          <option value="tudo">Todo o Histórico</option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label for="dashFiltroSetor">Setor:</label>
+        <select id="dashFiltroSetor">
+          <option value="">Todos os Setores</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Topo: Cartões de Resumo (KPIs) -->
+    <div class="kpi-container">
+      <div class="kpi-card" style="border-left-color: #0288d1;">
+        <h4>Total de Requisições</h4>
+        <div class="kpi-value" id="kpiTotalReq">0</div>
+      </div>
+      <div class="kpi-card" style="border-left-color: #2e7d32;">
+        <h4>Gasto Total Acumulado</h4>
+        <div class="kpi-value" id="kpiGastoTotal">R$ 0,00</div>
+      </div>
+      <div class="kpi-card" style="border-left-color: #ed6c02;">
+        <h4>Ticket Médio por Pedido</h4>
+        <div class="kpi-value" id="kpiTicketMedio">R$ 0,00</div>
+      </div>
+      <div class="kpi-card" style="border-left-color: #9c27b0;">
+        <h4>Setor Mais Demandante</h4>
+        <div class="kpi-value" id="kpiSetorTop" style="font-size: 1.2rem;">-</div>
+      </div>
+    </div>
+
+    <!-- Corpo: Gráficos Recomendados -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Evolução de Gastos</h3>
+        <canvas id="chartEvolucaoGastos"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Gastos por Setor (R$)</h3>
+        <canvas id="chartGastosSetor"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Top 10 Produtos Mais Solicitados</h3>
+        <canvas id="chartTopProdutos"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Status das Solicitações</h3>
+        <canvas id="chartStatusReq"></canvas>
+      </div>
     </div>
   </div>
 
-  <!-- ABA 4: CADASTROS & VALORES -->
+  <!-- ABA 5: CADASTROS & VALORES -->
   <div id="tab-cadastros" class="tab-content">
     <h2>Gestão de Produtos & Setores</h2>
     
@@ -342,14 +549,14 @@
         <button class="btn btn-primary" onclick="adicionarSetor()">Adicionar Setor</button>
         
         <h4 style="margin-top: 20px;">Setores Existentes</h4>
-        <ul id="listaSetoresCadastrados" style="margin-top: 10px; padding-left: 20px;">
-          <!-- Lista de setores -->
-        </ul>
+        <ul id="listaSetoresCadastrados" class="setores-grid"></ul>
       </div>
 
-      <!-- Gerenciar Produtos e Preços -->
+      <!-- Gerenciar Produtos e Vinculação -->
       <div style="flex: 2; min-width: 320px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
-        <h3>Cadastrar / Editar Preço de Produtos</h3>
+        <h3>Cadastrar / Editar Produto e Departamentos</h3>
+        <input type="hidden" id="cadCodigoOriginal">
+
         <div class="form-row" style="margin-top: 10px;">
           <div class="form-control">
             <input type="text" id="cadCodigo" placeholder="Código">
@@ -366,7 +573,16 @@
             <input type="number" step="0.01" id="cadPreco" placeholder="Preço Unitário (R$)">
           </div>
         </div>
-        <button class="btn btn-primary" style="margin-top: 10px;" onclick="salvarProduto()">Salvar Produto</button>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label>Vincular aos Setores/Departamentos Solicitantes:</label>
+          <div id="checkboxesSetoresProd" class="checkbox-group"></div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn btn-primary" onclick="salvarProduto()">Salvar Produto</button>
+          <button class="btn" style="background:#888; color:#fff;" onclick="limparFormularioProduto()">Cancelar / Limpar</button>
+        </div>
 
         <h4 style="margin-top: 20px;">Lista Geral de Produtos</h4>
         <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
@@ -376,212 +592,87 @@
                 <th>Código</th>
                 <th>Nome</th>
                 <th>Unidade</th>
-                <th>Preço Unitário (R$)</th>
+                <th>Preço (R$)</th>
+                <th>Setores</th>
+                <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="tbodyCadProdutos">
-              <!-- Lista de Produtos -->
-            </tbody>
+            <tbody id="tbodyCadProdutos"></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
-    // Base de Setores Inicializada
+    const SENHA_ADMIN = "1234";
+
     const setoresIniciais = [
       "HORTIFRUTI", "COZINHA CENTRAL", "AÇOUGUE", "CAFÉ DA MANHÃ",
       "CONFEITARIA", "GARD MANGER", "PADARIA", "BANQUETES",
       "RESTRIÇÃO", "VEZZOSO CUCINA", "ROOM SERVICE", "PIZZARIA"
     ];
 
-    // Base Completa de Produtos
-    const produtosIniciais = [
-      { code: "1001", nome: "ABACATE", unidade: "KG", preco: 0 },
-      { code: "1002", nome: "ABACAXI", unidade: "UN", preco: 0 },
-      { code: "1003", nome: "ABOBORA CABOTIA", unidade: "KG", preco: 0 },
-      { code: "1004", nome: "ABOBORA MENINA", unidade: "KG", preco: 0 },
-      { code: "1005", nome: "ABOBORA SERGIPANA", unidade: "KG", preco: 0 },
-      { code: "1006", nome: "ABOBRINHA ITALIANA", unidade: "KG", preco: 0 },
-      { code: "1007", nome: "ACEROLA", unidade: "KG", preco: 0 },
-      { code: "1008", nome: "AGRIAO", unidade: "MACO", preco: 0 },
-      { code: "1009", nome: "ALECRIM", unidade: "MACO", preco: 0 },
-      { code: "1010", nome: "ALFACE CRESPA", unidade: "MACO", preco: 0 },
-      { code: "1011", nome: "ALFACE LISA", unidade: "MACO", preco: 0 },
-      { code: "1012", nome: "ALFACE AMERICANA", unidade: "MACO", preco: 0 },
-      { code: "1013", nome: "ALFACE ROXA", unidade: "MACO", preco: 0 },
-      { code: "1014", nome: "ALHO IN NATURA", unidade: "KG", preco: 0 },
-      { code: "1015", nome: "ALHO PORRO", unidade: "KG", preco: 0 },
-      { code: "1016", nome: "ALMEIRAO", unidade: "MACO", preco: 0 },
-      { code: "1017", nome: "AMEIXA PRETA", unidade: "KG", preco: 0 },
-      { code: "1018", nome: "AMEIXA VERMELHA", unidade: "KG", preco: 0 },
-      { code: "1019", nome: "AMORA IN NATURA", unidade: "KG", preco: 0 },
-      { code: "1020", nome: "ANANAS", unidade: "UN", preco: 0 },
-      { code: "1021", nome: "ARETHA", unidade: "KG", preco: 0 },
-      { code: "1022", nome: "ASPARGO FRESCO", unidade: "KG", preco: 0 },
-      { code: "1023", nome: "AVOCADO", unidade: "KG", preco: 0 },
-      { code: "1024", nome: "BANANA CATURRA / NANICA", unidade: "KG", preco: 0 },
-      { code: "1025", nome: "BANANA PRATA", unidade: "KG", preco: 0 },
-      { code: "1026", nome: "BANANA DA TERRA", unidade: "KG", preco: 0 },
-      { code: "1027", nome: "BATATA DOCE", unidade: "KG", preco: 0 },
-      { code: "1028", nome: "BATATA ENGLISH / MONALISA", unidade: "KG", preco: 0 },
-      { code: "1029", nome: "BATATA BAROA / MANDIQUINHA", unidade: "KG", preco: 0 },
-      { code: "1030", nome: "BATATA ASTERIX", unidade: "KG", preco: 0 },
-      { code: "1031", nome: "BERINJELA", unidade: "KG", preco: 0 },
-      { code: "1032", nome: "BETERRABA", unidade: "KG", preco: 0 },
-      { code: "1033", nome: "BROCOLIS NINJA", unidade: "KG", preco: 0 },
-      { code: "1034", nome: "BROCOLIS RAMOSO", unidade: "MACO", preco: 0 },
-      { code: "1035", nome: "BROTO DE FEIJAO (MOYASHI)", unidade: "KG", preco: 0 },
-      { code: "1036", nome: "BROTO DE ALFAFA", unidade: "KG", preco: 0 },
-      { code: "1037", nome: "CACAU", unidade: "KG", preco: 0 },
-      { code: "1038", nome: "CAQUI", unidade: "KG", preco: 0 },
-      { code: "1039", nome: "CARAMBOLA", unidade: "KG", preco: 0 },
-      { code: "1040", nome: "CARA", unidade: "KG", preco: 0 },
-      { code: "1041", nome: "CEBOLA BRANCA", unidade: "KG", preco: 0 },
-      { code: "1042", nome: "CEBOLA ROXA", unidade: "KG", preco: 0 },
-      { code: "1043", nome: "CEBOLETE / CIBOULETTE", unidade: "MACO", preco: 0 },
-      { code: "1044", nome: "CEBOLINHA", unidade: "MACO", preco: 0 },
-      { code: "1045", nome: "CENOURA", unidade: "KG", preco: 0 },
-      { code: "1046", nome: "CENOURA BABY", unidade: "KG", preco: 0 },
-      { code: "1047", nome: "CEREJA FRESCA", unidade: "KG", preco: 0 },
-      { code: "1048", nome: "CHUCHU", unidade: "KG", preco: 0 },
-      { code: "1049", nome: "COENTRO", unidade: "MACO", preco: 0 },
-      { code: "1050", nome: "COUVE MANTEIGA", unidade: "MACO", preco: 0 },
-      { code: "1051", nome: "COUVE DE BRUXELAS", unidade: "KG", preco: 0 },
-      { code: "1052", nome: "COUVE-FLOR", unidade: "UN", preco: 0 },
-      { code: "1053", nome: "DAMASCO FRESCO", unidade: "KG", preco: 0 },
-      { code: "1054", nome: "ENDIVIA", unidade: "KG", preco: 0 },
-      { code: "1055", nome: "ERVA DOCE / FUNCHO", unidade: "KG", preco: 0 },
-      { code: "1056", nome: "ERVILHA TORTA", unidade: "KG", preco: 0 },
-      { code: "1057", nome: "ESPINAFRE", unidade: "MACO", preco: 0 },
-      { code: "1058", nome: "FIGO FRESCO", unidade: "KG", preco: 0 },
-      { code: "1059", nome: "FOLHA DE LOURO FRESCA", unidade: "MACO", preco: 0 },
-      { code: "1060", nome: "FRAMBOESA IN NATURA", unidade: "KG", preco: 0 },
-      { code: "1061", nome: "GOIABA VERMELHA", unidade: "KG", preco: 0 },
-      { code: "1062", nome: "GOIABA BRANCA", unidade: "KG", preco: 0 },
-      { code: "1063", nome: "GRAVIOLA", unidade: "KG", preco: 0 },
-      { code: "1064", nome: "INHAME", unidade: "KG", preco: 0 },
-      { code: "1065", nome: "JABUTICABA", unidade: "KG", preco: 0 },
-      { code: "1066", nome: "JACA", unidade: "KG", preco: 0 },
-      { code: "1067", nome: "JAMBO", unidade: "KG", preco: 0 },
-      { code: "1068", nome: "JATOBA", unidade: "KG", preco: 0 },
-      { code: "1069", nome: "JILO", unidade: "KG", preco: 0 },
-      { code: "1070", nome: "KIWI", unidade: "KG", preco: 0 },
-      { code: "1071", nome: "LARANJA PERA", unidade: "KG", preco: 0 },
-      { code: "1072", nome: "LARANJA LIMA", unidade: "KG", preco: 0 },
-      { code: "1073", nome: "LARANJABAHIA / KINNOW", unidade: "KG", preco: 0 },
-      { code: "1074", nome: "LIMEIRA / LIMA DA PERSIA", unidade: "KG", preco: 0 },
-      { code: "1075", nome: "LIMAO TAHITI", unidade: "KG", preco: 0 },
-      { code: "1076", nome: "LIMAO SICILIANO", unidade: "KG", preco: 0 },
-      { code: "1077", nome: "LIMAO CRAVO / GALEGO", unidade: "KG", preco: 0 },
-      { code: "1078", nome: "MACA FUJI", unidade: "KG", preco: 0 },
-      { code: "1079", nome: "MACA GALA", unidade: "KG", preco: 0 },
-      { code: "1080", nome: "MACA VERDE", unidade: "KG", preco: 0 },
-      { code: "1081", nome: "MACAXEIRA / MANDIOCA", unidade: "KG", preco: 0 },
-      { code: "1082", nome: "MANGABA", unidade: "KG", preco: 0 },
-      { code: "1083", nome: "MANGA PALMER", unidade: "KG", preco: 0 },
-      { code: "1084", nome: "MANGA TOMMY", unidade: "KG", preco: 0 },
-      { code: "1085", nome: "MANGA ROSA / ESPADA", unidade: "KG", preco: 0 },
-      { code: "1086", nome: "MANJERICO / MANJERICAO", unidade: "MACO", preco: 0 },
-      { code: "1087", nome: "MANJERICAO ROXO", unidade: "MACO", preco: 0 },
-      { code: "1088", nome: "MARACUJA AZEDO", unidade: "KG", preco: 0 },
-      { code: "1089", nome: "MARACUJA DOCE", unidade: "KG", preco: 0 },
-      { code: "1090", nome: "MAXIXE", unidade: "KG", preco: 0 },
-      { code: "1091", nome: "MELANCIA", unidade: "KG", preco: 0 },
-      { code: "1092", nome: "MELANCIA BABY", unidade: "KG", preco: 0 },
-      { code: "1093", nome: "MELAO AMARELO", unidade: "KG", preco: 0 },
-      { code: "1094", nome: "MELAO PELE DE SAPO", unidade: "KG", preco: 0 },
-      { code: "1095", nome: "MELAO CANTALOUPE", unidade: "KG", preco: 0 },
-      { code: "1096", nome: "MELAO ORANGE", unidade: "KG", preco: 0 },
-      { code: "1097", nome: "MERTILO / BLUEBERRY", unidade: "KG", preco: 0 },
-      { code: "1098", nome: "MILHO VERDE NA ESPANHA", unidade: "KG", preco: 0 },
-      { code: "1099", nome: "MORTANHA / MIRTILO", unidade: "KG", preco: 0 },
-      { code: "1100", nome: "MORANGO", unidade: "KG", preco: 0 },
-      { code: "1101", nome: "NARTAN / NECTARINA", unidade: "KG", preco: 0 },
-      { code: "1102", nome: "NISPERA / AMEIXA AMARELA", unidade: "KG", preco: 0 },
-      { code: "1103", nome: "NOZES IN NATURA", unidade: "KG", preco: 0 },
-      { code: "1104", nome: "ORGANO FRESCO", unidade: "MACO", preco: 0 },
-      { code: "1105", nome: "PALMITO IN NATURA", unidade: "KG", preco: 0 },
-      { code: "1106", nome: "PEPANO JAPONES", unidade: "KG", preco: 0 },
-      { code: "1107", nome: "PEPANO COMUM / CAIPIRA", unidade: "KG", preco: 0 },
-      { code: "1108", nome: "PERA WILLIANS / D ANJOU", unidade: "KG", preco: 0 },
-      { code: "1109", nome: "PERA ERCOLINI / PORTUGUESA", unidade: "KG", preco: 0 },
-      { code: "1110", nome: "PESSEGO FRESCO", unidade: "KG", preco: 0 },
-      { code: "1111", nome: "PIMENTA DEDO DE MOCA", unidade: "KG", preco: 0 },
-      { code: "1112", nome: "PIMENTA DE CHEIRO", unidade: "KG", preco: 0 },
-      { code: "1113", nome: "PIMENTA MALAGUETA", unidade: "KG", preco: 0 },
-      { code: "1114", nome: "PIMENTAO VERDE", unidade: "KG", preco: 0 },
-      { code: "1115", nome: "PIMENTAO VERMELHO", unidade: "KG", preco: 0 },
-      { code: "1116", nome: "PIMENTAO AMARELO", unidade: "KG", preco: 0 },
-      { code: "1117", nome: "PITAYA", unidade: "KG", preco: 0 },
-      { code: "1118", nome: "QUIABO", unidade: "KG", preco: 0 },
-      { code: "1119", nome: "RADICCHIO", unidade: "MACO", preco: 0 },
-      { code: "1120", nome: "RABANETE", unidade: "MACO", preco: 0 },
-      { code: "1121", nome: "REPOLHO BRANCO", unidade: "KG", preco: 0 },
-      { code: "1122", nome: "REPOLHO ROXO", unidade: "KG", preco: 0 },
-      { code: "1123", nome: "REPOLHO CRESPO / CHINES", unidade: "KG", preco: 0 },
-      { code: "1124", nome: "ROMPOM / ROMA", unidade: "KG", preco: 0 },
-      { code: "1125", nome: "RUCOLA", unidade: "MACO", preco: 0 },
-      { code: "1126", nome: "SALSA / SALSINHA", unidade: "MACO", preco: 0 },
-      { code: "1127", nome: "SALSIRAO / AIPO", unidade: "KG", preco: 0 },
-      { code: "1128", nome: "SERIGUELA", unidade: "KG", preco: 0 },
-      { code: "1129", nome: "TANGERINA / PONKAN", unidade: "KG", preco: 0 },
-      { code: "1130", nome: "TANGERINA MURCOTT", unidade: "KG", preco: 0 },
-      { code: "1131", nome: "TOMATE DEBORA / SALADA", unidade: "KG", preco: 0 },
-      { code: "1132", nome: "TOMATE ITALIANO", unidade: "KG", preco: 0 },
-      { code: "1133", nome: "TOMATE CEREJA", unidade: "KG", preco: 0 },
-      { code: "1134", nome: "TOMATE GRAPPER", unidade: "KG", preco: 0 },
-      { code: "1135", nome: "TOMATILHO", unidade: "KG", preco: 0 },
-      { code: "1136", nome: "TOMILHO", unidade: "MACO", preco: 0 },
-      { code: "1137", nome: "TORONJA / GRAAPEFRUIT", unidade: "KG", preco: 0 },
-      { code: "1138", nome: "UVA ITALIA", unidade: "KG", preco: 0 },
-      { code: "1139", nome: "UVA NIAGARA", unidade: "KG", preco: 0 },
-      { code: "1140", nome: "UVA THOMPSON (SEM SEMENTE)", unidade: "KG", preco: 0 },
-      { code: "1141", nome: "UVA CRIMSON (SEM SEMENTE)", unidade: "KG", preco: 0 },
-      { code: "1142", nome: "UVA BLACK (SEM SEMENTE)", unidade: "KG", preco: 0 },
-      { code: "1143", nome: "UVA ROXA COM SEMENTE", unidade: "KG", preco: 0 },
-      { code: "1144", nome: "VAGEM MACARRAO", unidade: "KG", preco: 0 },
-      { code: "1145", nome: "VAGEM MANTEIGA", unidade: "KG", preco: 0 },
-      { code: "2001", nome: "ABOBORA CABOTIA DESP. CUBOS", unidade: "KG", preco: 0 },
-      { code: "2002", nome: "ABOBRINHA ITALIANA FATIADA", unidade: "KG", preco: 0 },
-      { code: "2003", nome: "ALFACE CRESPA HIGIENIZADA", unidade: "KG", preco: 0 },
-      { code: "2004", nome: "ALFACE AMERICANA HIGIENIZADA", unidade: "KG", preco: 0 },
-      { code: "2005", nome: "ALFACE ROXA HIGIENIZADA", unidade: "KG", preco: 0 },
-      { code: "2006", nome: "ALHO DESCASCADO", unidade: "KG", preco: 0 },
-      { code: "2007", nome: "BATATA DESCASCADA CUBOS", unidade: "KG", preco: 0 },
-      { code: "2008", nome: "BATATA DESCASCADA PALITO", unidade: "KG", preco: 0 },
-      { code: "2009", nome: "BETERRABA RALADA", unidade: "KG", preco: 0 },
-      { code: "2010", nome: "CENOURA RALADA", unidade: "KG", preco: 0 },
-      { code: "2011", nome: "CEBOLA DESCASCADA", unidade: "KG", preco: 0 },
-      { code: "2012", nome: "CEBOLA BRUNOISE (CUBINHOS)", unidade: "KG", preco: 0 },
-      { code: "2013", nome: "COUVE MANTEIGA PICADA", unidade: "KG", preco: 0 },
-      { code: "2014", nome: "ESPINAFRE HIGIENIZADO", unidade: "KG", preco: 0 },
-      { code: "2015", nome: "REPOLHO BRANCO TRICOTADO", unidade: "KG", preco: 0 },
-      { code: "2016", nome: "RUCOLA HIGIENIZADA", unidade: "KG", preco: 0 }
+    const produtosBase = [
+      { code: "1001", nome: "ABACATE", unidade: "KG", preco: 3.65, departamentos: ["HORTIFRUTI"] },
+      { code: "1002", nome: "ABACAXI PEROLA", unidade: "KG", preco: 4.50, departamentos: ["HORTIFRUTI"] },
+      { code: "1003", nome: "ABOBORA CABOTIA", unidade: "KG", preco: 2.80, departamentos: ["HORTIFRUTI"] },
+      { code: "1004", nome: "ABOBORA PESCOCO", unidade: "KG", preco: 3.65, departamentos: ["HORTIFRUTI"] },
+      { code: "1006", nome: "ABOBRINHA ITALIANA", unidade: "KG", preco: 2.89, departamentos: ["HORTIFRUTI"] },
+      { code: "1008", nome: "AGRIAO HIDROPONICO", unidade: "KG", preco: 8.90, departamentos: ["HORTIFRUTI"] },
+      { code: "1010", nome: "ALFACE CRESPA HIDRO", unidade: "KG", preco: 8.10, departamentos: ["HORTIFRUTI"] },
+      { code: "1012", nome: "ALFACE AMERICANA HIDRO", unidade: "KG", preco: 8.10, departamentos: ["HORTIFRUTI"] },
+      { code: "1013", nome: "ALFACE ROXA", unidade: "KG", preco: 11.80, departamentos: ["HORTIFRUTI"] },
+      { code: "1014", nome: "ALHO LIMPO", unidade: "KG", preco: 22.00, departamentos: ["HORTIFRUTI"] },
+      { code: "1015", nome: "ALHO PORO", unidade: "KG", preco: 7.35, departamentos: ["HORTIFRUTI"] },
+      { code: "1022", nome: "ASPARGO FRESCO", unidade: "KG", preco: 94.65, departamentos: ["HORTIFRUTI"] },
+      { code: "1024", nome: "BANANA NANICA", unidade: "KG", preco: 4.15, departamentos: ["HORTIFRUTI"] },
+      { code: "1025", nome: "BANANA PRATA", unidade: "KG", preco: 5.80, departamentos: ["HORTIFRUTI"] },
+      { code: "1028", nome: "BATATA MONALISA", unidade: "KG", preco: 3.95, departamentos: ["HORTIFRUTI"] },
+      { code: "1029", nome: "BATATA BAROA / MANDIOQUINHA", unidade: "KG", preco: 6.00, departamentos: ["HORTIFRUTI"] },
+      { code: "1031", nome: "BERINJELA", unidade: "KG", preco: 5.60, departamentos: ["HORTIFRUTI"] },
+      { code: "1033", nome: "BROCOLIS NINJA", unidade: "KG", preco: 8.88, departamentos: ["HORTIFRUTI"] },
+      { code: "1041", nome: "CEBOLA NACIONAL", unidade: "KG", preco: 5.15, departamentos: ["HORTIFRUTI"] },
+      { code: "1042", nome: "CEBOLA ROXA", unidade: "KG", preco: 6.55, departamentos: ["HORTIFRUTI"] },
+      { code: "1045", nome: "CENOURA", unidade: "KG", preco: 3.70, departamentos: ["HORTIFRUTI"] },
+      { code: "1049", nome: "COENTRO", unidade: "KG", preco: 11.75, departamentos: ["HORTIFRUTI"] },
+      { code: "1050", nome: "COUVE MANTEIGA", unidade: "KG", preco: 4.99, departamentos: ["HORTIFRUTI"] },
+      { code: "1052", nome: "COUVE-FLOR", unidade: "KG", preco: 8.17, departamentos: ["HORTIFRUTI"] },
+      { code: "1071", nome: "LARANJA PERA", unidade: "KG", preco: 4.55, departamentos: ["HORTIFRUTI"] },
+      { code: "1075", nome: "LIMAO TAITI", unidade: "KG", preco: 6.15, departamentos: ["HORTIFRUTI"] },
+      { code: "1076", nome: "LIMAO SICILIANO", unidade: "KG", preco: 5.90, departamentos: ["HORTIFRUTI"] },
+      { code: "1078", nome: "MACA FUJI", unidade: "KG", preco: 14.90, departamentos: ["HORTIFRUTI"] },
+      { code: "1080", nome: "MACA VERDE", unidade: "KG", preco: 16.20, departamentos: ["HORTIFRUTI"] },
+      { code: "1083", nome: "MANGA", unidade: "KG", preco: 7.30, departamentos: ["HORTIFRUTI"] },
+      { code: "1088", nome: "MARACUJA", unidade: "KG", preco: 12.25, departamentos: ["HORTIFRUTI"] },
+      { code: "1091", nome: "MELANCIA", unidade: "KG", preco: 2.40, departamentos: ["HORTIFRUTI"] },
+      { code: "1093", nome: "MELAO TIPO 8", unidade: "KG", preco: 6.08, departamentos: ["HORTIFRUTI"] },
+      { code: "1106", nome: "PEPINO JAPONES", unidade: "KG", preco: 6.00, departamentos: ["HORTIFRUTI"] },
+      { code: "1114", nome: "PIMENTAO VERDE", unidade: "KG", preco: 6.75, departamentos: ["HORTIFRUTI"] },
+      { code: "1115", nome: "PIMENTAO VERMELHO", unidade: "KG", preco: 14.50, departamentos: ["HORTIFRUTI"] },
+      { code: "1116", nome: "PIMENTAO AMARELO", unidade: "KG", preco: 12.50, departamentos: ["HORTIFRUTI"] },
+      { code: "1121", nome: "REPOLHO VERDE", unidade: "KG", preco: 3.15, departamentos: ["HORTIFRUTI"] },
+      { code: "1125", nome: "RUCULA", unidade: "KG", preco: 9.80, departamentos: ["HORTIFRUTI"] },
+      { code: "1126", nome: "SALSINHA", unidade: "KG", preco: 5.80, departamentos: ["HORTIFRUTI"] },
+      { code: "1131", nome: "TOMATE MOLHO", unidade: "KG", preco: 4.15, departamentos: ["HORTIFRUTI"] },
+      { code: "1132", nome: "TOMATE SALADA", unidade: "KG", preco: 5.25, departamentos: ["HORTIFRUTI"] },
+      { code: "1133", nome: "TOMATE CEREJA", unidade: "KG", preco: 19.90, departamentos: ["HORTIFRUTI"] }
     ];
 
-    // Estado Global da Aplicação com Suporte ao LocalStorage
     let setores = JSON.parse(localStorage.getItem('sys_setores')) || setoresIniciais;
-    let produtos = JSON.parse(localStorage.getItem('sys_produtos')) || produtosIniciais;
+    let produtos = JSON.parse(localStorage.getItem('sys_produtos')) || produtosBase;
     let solicitacoes = JSON.parse(localStorage.getItem('sys_solicitacoes')) || [];
 
-    // Inicialização ao carregar a página
-    document.addEventListener('DOMContentLoaded', () => {
-      // Limpeza automática da memória cache local para corrigir incompatibilidades antigas
-      if (!localStorage.getItem('sys_v3_unificado')) {
-        localStorage.clear();
-        localStorage.setItem('sys_v3_unificado', 'true');
-        setores = setoresIniciais;
-        produtos = produtosIniciais;
-        solicitacoes = [];
-      }
+    // Instâncias de Gráficos
+    let chartEvolucao = null;
+    let chartSetores = null;
+    let chartProdutos = null;
+    let chartStatus = null;
 
-      // Preencher data atual
+    document.addEventListener('DOMContentLoaded', () => {
       const hj = new Date();
-      document.getElementById('dataAtualHeader').textContent = hj.toLocaleDateString('pt-BR');
       document.getElementById('solData').valueAsDate = hj;
 
       renderSelectSetores();
@@ -591,7 +682,8 @@
       renderCadastros();
       atualizarBadges();
 
-      // Evento de filtro rápido na aba do solicitante
+      document.getElementById('solSetor').addEventListener('change', renderTabelaSolicitante);
+
       document.getElementById('filtroProdutoSolicitante').addEventListener('input', function(e) {
         const termo = e.target.value.toLowerCase();
         document.querySelectorAll('#tbodySolicitante tr').forEach(tr => {
@@ -601,38 +693,71 @@
         });
       });
 
-      // Eventos de filtros no histórico
       document.getElementById('filtroHistSetor').addEventListener('change', renderHistorico);
       document.getElementById('filtroHistStatus').addEventListener('change', renderHistorico);
+
+      // Eventos Dashboard
+      document.getElementById('dashFiltroPeriodo').addEventListener('change', renderDashboard);
+      document.getElementById('dashFiltroSetor').addEventListener('change', renderDashboard);
     });
 
-    // Salvar Dados
     function salvarSetores() { localStorage.setItem('sys_setores', JSON.stringify(setores)); }
     function salvarProdutos() { localStorage.setItem('sys_produtos', JSON.stringify(produtos)); }
     function salvarSolicitacoes() { localStorage.setItem('sys_solicitacoes', JSON.stringify(solicitacoes)); }
 
-    // Renderizar Selects de Setores
     function renderSelectSetores() {
       const selSol = document.getElementById('solSetor');
       const selHist = document.getElementById('filtroHistSetor');
+      const selDash = document.getElementById('dashFiltroSetor');
 
       selSol.innerHTML = '<option value="">Selecione o setor...</option>';
       selHist.innerHTML = '<option value="">Todos os Setores</option>';
+      selDash.innerHTML = '<option value="">Todos os Setores</option>';
 
       setores.forEach(setor => {
         selSol.innerHTML += `<option value="${setor}">${setor}</option>`;
         selHist.innerHTML += `<option value="${setor}">${setor}</option>`;
+        selDash.innerHTML += `<option value="${setor}">${setor}</option>`;
       });
     }
 
-    // Renderizar Tabela do Solicitante
     function renderTabelaSolicitante() {
+      const thead = document.getElementById('theadSolicitante');
       const tbody = document.getElementById('tbodySolicitante');
       tbody.innerHTML = '';
 
-      produtos.forEach(p => {
-        const codProduto = p.code || p.codigo || '—';
-        const uniProduto = p.unidade || p.un || 'UN';
+      const setorSelecionado = document.getElementById('solSetor').value;
+
+      if (!setorSelecionado) {
+        thead.innerHTML = `
+          <tr>
+            <th>Código</th><th>Produto</th><th>Unidade</th><th>Preço Un.</th>
+            <th>Estoque</th><th>Hóspedes</th><th>Refeitório</th><th>Cambusa</th>
+            <th>Qtd. Total</th><th>Total (R$)</th>
+          </tr>
+        `;
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #777;">Por favor, selecione um setor no campo acima para carregar o catálogo de produtos correspondente.</td></tr>';
+        return;
+      }
+
+      thead.innerHTML = `
+        <tr>
+          <th>Código</th><th>Produto</th><th>Unidade</th><th>Preço Un.</th>
+          <th>Estoque</th><th>Hóspedes</th><th>Refeitório</th><th>Cambusa</th>
+          <th>Qtd. Total</th><th>Total (R$)</th>
+        </tr>
+      `;
+
+      const produtosFiltrados = produtos.filter(p => p.departamentos && p.departamentos.includes(setorSelecionado));
+
+      if (produtosFiltrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #777;">Nenhum produto cadastrado para este setor/departamento.</td></tr>`;
+        return;
+      }
+
+      produtosFiltrados.forEach(p => {
+        const codProduto = p.code || '—';
+        const uniProduto = p.unidade || 'UN';
         const precoProduto = parseFloat(p.preco) || 0;
 
         const tr = document.createElement('tr');
@@ -651,31 +776,27 @@
           <td><strong class="sol-total">0.0</strong></td>
           <td>R$ <span class="sol-valor-total">0.00</span></td>
         `;
+
         tbody.appendChild(tr);
       });
 
-      // Evento para cálculo automático nas linhas da tabela
       tbody.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', function() {
           const tr = this.closest('tr');
+          const preco = parseFloat(tr.dataset.preco) || 0;
+
           const est = parseFloat(tr.querySelector('.input-est').value) || 0;
           const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
           
-          // FÓRMULA: (Hóspedes + Refeitório + Cambusa) - Estoque
-          const somaSetores = hosp + ref + camb;
-          const total = Math.max(0, somaSetores - est);
-
+          const total = Math.max(0, (hosp + ref + camb) - est);
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
-
-          const preco = parseFloat(tr.dataset.preco) || 0;
           tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
         });
       });
     }
 
-    // Submeter Solicitação (Solicitante)
     document.getElementById('formSolicitante').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -689,8 +810,11 @@
       }
 
       const itens = [];
+
       document.querySelectorAll('#tbodySolicitante tr').forEach(tr => {
         const code = tr.dataset.code;
+        if (!code) return;
+
         const est = parseFloat(tr.querySelector('.input-est').value) || 0;
         const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
         const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
@@ -698,11 +822,11 @@
         const total = parseFloat(tr.querySelector('.sol-total').textContent) || 0;
 
         if (total > 0) {
-          const prodObj = produtos.find(p => (p.code || p.codigo) === code);
+          const prodObj = produtos.find(p => p.code === code);
           itens.push({
             code: code,
             nome: prodObj ? prodObj.nome : code,
-            unidade: prodObj ? (prodObj.unidade || prodObj.un || 'UN') : 'UN',
+            unidade: prodObj ? prodObj.unidade : 'UN',
             preco: prodObj ? (parseFloat(prodObj.preco) || 0) : 0,
             estoque: est,
             hospedes: hosp,
@@ -715,7 +839,7 @@
       });
 
       if (itens.length === 0) {
-        alert("Selecione pelo menos um item com quantidade maior que zero!");
+        alert("Selecione pelo menos um item com quantidade solicitada maior que zero!");
         return;
       }
 
@@ -742,7 +866,6 @@
       atualizarBadges();
     });
 
-    // Renderizar Painel de Aprovação do Chef
     function renderAprovacaoChef() {
       const container = document.getElementById('listaAprovacaoChef');
       container.innerHTML = '';
@@ -750,7 +873,7 @@
       const pendentes = solicitacoes.filter(s => s.status === 'PENDENTE');
 
       if (pendentes.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhuma requisição pendente para aprovação no momento.</p>';
+        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhuma requisição pendente no momento.</p>';
         return;
       }
 
@@ -759,9 +882,15 @@
         card.className = 'req-card';
 
         let itensHTML = '';
+        let totalEstimadoReq = 0;
+
         req.itens.forEach((item, index) => {
+          const precoUnit = parseFloat(item.preco) || 0;
+          const subtotalItem = item.qtdAprovada * precoUnit;
+          totalEstimadoReq += subtotalItem;
+
           itensHTML += `
-            <tr>
+            <tr data-item-index="${index}">
               <td><strong>${item.code}</strong> - ${item.nome}</td>
               <td>${item.unidade}</td>
               <td>${item.estoque}</td>
@@ -770,37 +899,49 @@
                 <input type="number" step="0.1" class="qty-input" value="${item.qtdAprovada}" 
                   onchange="atualizarQtdAprovada('${req.id}', ${index}, this.value)">
               </td>
+              <td>R$ ${precoUnit.toFixed(2)}</td>
+              <td>R$ <span class="subtotal-chef">${subtotalItem.toFixed(2)}</span></td>
             </tr>
           `;
         });
 
         card.innerHTML = `
-          <div class="req-header">
-            <span>Setor: ${req.setor} | Data Pedido: ${req.data}</span>
-            <span class="status-badge status-PENDENTE">Aguardando Chef</span>
+          <div class="req-header-toggle" onclick="toggleAccordion(this)">
+            <div class="req-summary-info">
+              <span><strong>Setor:</strong> ${req.setor}</span>
+              <span><strong>Data:</strong> ${req.data}</span>
+              <span><strong>Total:</strong> <span style="color: var(--primary); font-weight: bold;">R$ <span id="total-req-${req.id}">${totalEstimadoReq.toFixed(2)}</span></span></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="status-badge status-PENDENTE">Aguardando Chef</span>
+              <span class="accordion-icon">▼</span>
+            </div>
           </div>
-          <p style="font-size: 0.85rem; margin-bottom: 10px;"><strong>Obs:</strong> ${req.observacao || 'Nenhuma'}</p>
           
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>UN</th>
-                  <th>Estoque Informado</th>
-                  <th>Qtd. Solicitada</th>
-                  <th>Qtd. Aprovada pelo Chef</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${itensHTML}
-              </tbody>
-            </table>
-          </div>
+          <div class="req-body">
+            <p style="font-size: 0.85rem; margin-bottom: 12px; color: #555;"><strong>Observação:</strong> ${req.observacao || 'Nenhuma'}</p>
+            
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>UN</th>
+                    <th>Estoque Informado</th>
+                    <th>Qtd. Solicitada</th>
+                    <th>Qtd. Aprovada pelo Chef</th>
+                    <th>Preço Un.</th>
+                    <th>Subtotal (R$)</th>
+                  </tr>
+                </thead>
+                <tbody>${itensHTML}</tbody>
+              </table>
+            </div>
 
-          <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-            <button class="btn btn-danger" onclick="decisaoChef('${req.id}', 'REJEITADO')">Rejeitar Requisição</button>
-            <button class="btn btn-primary" onclick="decisaoChef('${req.id}', 'APROVADO')">Aprovar e Enviar à Secretaria</button>
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+              <button class="btn btn-danger" onclick="decisaoChef('${req.id}', 'REJEITADO')">Rejeitar Requisição</button>
+              <button class="btn btn-primary" onclick="decisaoChef('${req.id}', 'APROVADO')">Aprovar e Enviar à Secretaria</button>
+            </div>
           </div>
         `;
 
@@ -808,11 +949,34 @@
       });
     }
 
+    function toggleAccordion(headerElement) {
+      const card = headerElement.closest('.req-card');
+      card.classList.toggle('open');
+    }
+
     function atualizarQtdAprovada(reqId, itemIndex, valor) {
       const req = solicitacoes.find(s => s.id === reqId);
       if (req && req.itens[itemIndex]) {
-        req.itens[itemIndex].qtdAprovada = parseFloat(valor) || 0;
+        const novaQtd = parseFloat(valor) || 0;
+        req.itens[itemIndex].qtdAprovada = novaQtd;
         salvarSolicitacoes();
+
+        const preco = parseFloat(req.itens[itemIndex].preco) || 0;
+        const novoSubtotal = novaQtd * preco;
+
+        let totalGeral = 0;
+        req.itens.forEach(it => {
+          totalGeral += (it.qtdAprovada * (parseFloat(it.preco) || 0));
+        });
+
+        const card = document.querySelector(`#total-req-${reqId}`).closest('.req-card');
+        if (card) {
+          const row = card.querySelector(`tr[data-item-index="${itemIndex}"]`);
+          if (row) {
+            row.querySelector('.subtotal-chef').textContent = novoSubtotal.toFixed(2);
+          }
+          document.getElementById(`total-req-${reqId}`).textContent = totalGeral.toFixed(2);
+        }
       }
     }
 
@@ -827,7 +991,7 @@
       }
     }
 
-    // Renderizar Histórico e Secretaria
+    /* RENDER HISTÓRICO - LIMPO E OPERACIONAL (SEM GRÁFICOS) */
     function renderHistorico() {
       const container = document.getElementById('listaHistorico');
       container.innerHTML = '';
@@ -842,7 +1006,7 @@
       });
 
       if (filtrados.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhum registro encontrado.</p>';
+        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenum registro encontrado.</p>';
         return;
       }
 
@@ -853,7 +1017,8 @@
         let totalGeralReq = 0;
         let itensHTML = '';
         req.itens.forEach(item => {
-          const subtotal = item.qtdAprovada * item.preco;
+          const precoUnit = parseFloat(item.preco) || 0;
+          const subtotal = item.qtdAprovada * precoUnit;
           totalGeralReq += subtotal;
           itensHTML += `
             <tr>
@@ -862,7 +1027,7 @@
               <td>${item.unidade}</td>
               <td>${item.qtdPedida}</td>
               <td><strong>${item.qtdAprovada}</strong></td>
-              <td>R$ ${item.preco.toFixed(2)}</td>
+              <td>R$ ${precoUnit.toFixed(2)}</td>
               <td>R$ ${subtotal.toFixed(2)}</td>
             </tr>
           `;
@@ -877,33 +1042,46 @@
         ` : '';
 
         card.innerHTML = `
-          <div class="req-header">
-            <span>Setor: ${req.setor} | Nº Oficial: ${req.numeroOficial || 'Pendente'}</span>
-            <span class="status-badge status-${req.status}">${req.status}</span>
-          </div>
-          <p style="font-size: 0.85rem;"><strong>Data:</strong> ${req.data} | <strong>Enviado em:</strong> ${req.dataEnvio}</p>
-          <p style="font-size: 0.85rem; margin-bottom: 10px;"><strong>Valor Total Aprovado:</strong> R$ ${totalGeralReq.toFixed(2)}</p>
-          
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Cód.</th>
-                  <th>Produto</th>
-                  <th>UN</th>
-                  <th>Qtd. Solicitada</th>
-                  <th>Qtd. Aprovada</th>
-                  <th>Preço Un.</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${itensHTML}
-              </tbody>
-            </table>
+          <div class="req-header-toggle" onclick="toggleAccordion(this)">
+            <div class="req-summary-info">
+              <span><strong>Setor:</strong> ${req.setor}</span>
+              <span><strong>Data:</strong> ${req.data}</span>
+              <span><strong>Nº Oficial:</strong> ${req.numeroOficial || 'Pendente'}</span>
+              <span><strong>Total:</strong> <span style="color: var(--primary); font-weight: bold;">R$ ${totalGeralReq.toFixed(2)}</span></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="status-badge status-${req.status}">${req.status}</span>
+              <span class="accordion-icon">▼</span>
+            </div>
           </div>
 
-          ${acaoSecretaria}
+          <div class="req-body">
+            <p style="font-size: 0.85rem; margin-bottom: 5px;"><strong>Enviado em:</strong> ${req.dataEnvio}</p>
+            <p style="font-size: 0.85rem; margin-bottom: 10px;"><strong>Obs:</strong> ${req.observacao || 'Nenhuma'}</p>
+            
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cód.</th>
+                    <th>Produto</th>
+                    <th>UN</th>
+                    <th>Qtd. Solicitada</th>
+                    <th>Qtd. Aprovada</th>
+                    <th>Preço Un.</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>${itensHTML}</tbody>
+              </table>
+            </div>
+
+            ${acaoSecretaria}
+
+            <div style="margin-top: 15px; text-align: right;">
+              <button class="btn btn-success btn-sm" onclick="exportarExcel('${req.id}')">📥 Exportar para Excel</button>
+            </div>
+          </div>
         `;
 
         container.appendChild(card);
@@ -929,24 +1107,221 @@
       }
     }
 
-    // Renderizar e Gerenciar Cadastros
+    function exportarExcel(reqId) {
+      const req = solicitacoes.find(s => s.id === reqId);
+      if (!req) return;
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += `Requisicao ID;${req.id}\n`;
+      csvContent += `Setor;${req.setor}\n`;
+      csvContent += `Data;${req.data}\n`;
+      csvContent += `Status;${req.status}\n`;
+      csvContent += `Numero Oficial;${req.numeroOficial || 'N/A'}\n\n`;
+
+      csvContent += "Codigo;Produto;Unidade;Qtd Pedida;Qtd Aprovada;Preco Unitario;Subtotal\n";
+
+      req.itens.forEach(i => {
+        const subtotal = i.qtdAprovada * i.preco;
+        csvContent += `${i.code};${i.nome};${i.unidade};${i.qtdPedida};${i.qtdAprovada};${i.preco.toFixed(2)};${subtotal.toFixed(2)}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Requisicao_${req.setor}_${req.data}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    /* RENDER DASHBOARD COMPLETO (KPIs + FILTROS + 4 GRÁFICOS) */
+    function renderDashboard() {
+      const periodo = document.getElementById('dashFiltroPeriodo').value;
+      const setorFiltro = document.getElementById('dashFiltroSetor').value;
+
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+
+      // Filtragem dos Dados
+      let reqsFiltradas = solicitacoes.filter(req => {
+        const reqData = new Date(req.data + 'T00:00:00');
+        
+        // Filtro por Setor
+        if (setorFiltro && req.setor !== setorFiltro) return false;
+
+        // Filtro por Período
+        if (periodo === 'mes') {
+          return reqData.getMonth() === mesAtual && reqData.getFullYear() === anoAtual;
+        } else if (periodo === '3meses') {
+          const tresMesesAtras = new Date();
+          tresMesesAtras.setMonth(tresMesesAtras.getMonth() - 3);
+          return reqData >= tresMesesAtras;
+        }
+        return true; // tudo
+      });
+
+      // Cálculo dos KPIs
+      const totalReq = reqsFiltradas.length;
+      let gastoTotal = 0;
+      const contagemSetores = {};
+      const gastosPorDia = {};
+      const gastosPorSetor = {};
+      const produtosQtd = {};
+      const statusContagem = { 'PENDENTE': 0, 'APROVADO': 0, 'CONCLUIDO': 0, 'REJEITADO': 0 };
+
+      reqsFiltradas.forEach(req => {
+        statusContagem[req.status] = (statusContagem[req.status] || 0) + 1;
+        contagemSetores[req.setor] = (contagemSetores[req.setor] || 0) + 1;
+
+        if (req.status !== 'REJEITADO') {
+          let custoReq = 0;
+          req.itens.forEach(i => {
+            const totalItem = i.qtdAprovada * parseFloat(i.preco || 0);
+            custoReq += totalItem;
+
+            // Top Produtos
+            produtosQtd[i.nome] = (produtosQtd[i.nome] || 0) + i.qtdAprovada;
+          });
+
+          gastoTotal += custoReq;
+          gastosPorSetor[req.setor] = (gastosPorSetor[req.setor] || 0) + custoReq;
+          gastosPorDia[req.data] = (gastosPorDia[req.data] || 0) + custoReq;
+        }
+      });
+
+      const ticketMedio = totalReq > 0 ? (gastoTotal / totalReq) : 0;
+
+      // Descobrir Setor Mais Demandante
+      let setorTop = '-';
+      let maxPed = 0;
+      for (const [s, count] of Object.entries(contagemSetores)) {
+        if (count > maxPed) {
+          maxPed = count;
+          setorTop = s;
+        }
+      }
+
+      // Atualiza HTML dos KPIs
+      document.getElementById('kpiTotalReq').textContent = totalReq;
+      document.getElementById('kpiGastoTotal').textContent = `R$ ${gastoTotal.toFixed(2)}`;
+      document.getElementById('kpiTicketMedio').textContent = `R$ ${ticketMedio.toFixed(2)}`;
+      document.getElementById('kpiSetorTop').textContent = setorTop;
+
+      // 1. Gráfico de Evolução de Gastos (Linha)
+      const datasOrdenadas = Object.keys(gastosPorDia).sort();
+      const valoresEvolucao = datasOrdenadas.map(d => gastosPorDia[d]);
+
+      if (chartEvolucao) chartEvolucao.destroy();
+      chartEvolucao = new Chart(document.getElementById('chartEvolucaoGastos'), {
+        type: 'line',
+        data: {
+          labels: datasOrdenadas.length ? datasOrdenadas : ['Sem dados'],
+          datasets: [{
+            label: 'Gastos (R$)',
+            data: valoresEvolucao.length ? valoresEvolucao : [0],
+            borderColor: '#2e7d32',
+            backgroundColor: 'rgba(46, 125, 50, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true }
+      });
+
+      // 2. Gráfico Gastos por Setor (Barras Horizontais)
+      const labelsSetores = Object.keys(gastosPorSetor);
+      const valoresSetores = Object.values(gastosPorSetor);
+
+      if (chartSetores) chartSetores.destroy();
+      chartSetores = new Chart(document.getElementById('chartGastosSetor'), {
+        type: 'bar',
+        data: {
+          labels: labelsSetores.length ? labelsSetores : ['Sem dados'],
+          datasets: [{
+            label: 'Total Gastos (R$)',
+            data: valoresSetores.length ? valoresSetores : [0],
+            backgroundColor: '#0288d1'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true
+        }
+      });
+
+      // 3. Top 10 Produtos Mais Solicitados
+      const topProdutosArray = Object.entries(produtosQtd)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      const labelsProd = topProdutosArray.map(p => p[0]);
+      const qtdsProd = topProdutosArray.map(p => p[1]);
+
+      if (chartProdutos) chartProdutos.destroy();
+      chartProdutos = new Chart(document.getElementById('chartTopProdutos'), {
+        type: 'bar',
+        data: {
+          labels: labelsProd.length ? labelsProd : ['Sem dados'],
+          datasets: [{
+            label: 'Quantidade Solicitada',
+            data: qtdsProd.length ? qtdsProd : [0],
+            backgroundColor: '#ed6c02'
+          }]
+        },
+        options: { responsive: true }
+      });
+
+      // 4. Status das Solicitações (Rosca / Pizza)
+      if (chartStatus) chartStatus.destroy();
+      chartStatus = new Chart(document.getElementById('chartStatusReq'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Pendente', 'Aprovado Chef', 'Concluído (Nº Oficial)', 'Rejeitado'],
+          datasets: [{
+            data: [
+              statusContagem['PENDENTE'],
+              statusContagem['APROVADO'],
+              statusContagem['CONCLUIDO'],
+              statusContagem['REJEITADO']
+            ],
+            backgroundColor: ['#ed6c02', '#2e7d32', '#0288d1', '#d32f2f']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
     function renderCadastros() {
       const ulSetores = document.getElementById('listaSetoresCadastrados');
       ulSetores.innerHTML = '';
       setores.forEach((s, index) => {
         ulSetores.innerHTML += `
-          <li style="margin-bottom: 5px;">
-            ${s} <button style="color: red; border: none; background: none; cursor: pointer;" onclick="removerSetor(${index})">❌</button>
+          <li class="setor-chip">
+            <span>${s}</span>
+            <button class="btn-remove-setor" title="Remover Setor" onclick="removerSetor(${index})">✕</button>
           </li>
+        `;
+      });
+
+      const boxSetores = document.getElementById('checkboxesSetoresProd');
+      boxSetores.innerHTML = '';
+      setores.forEach(s => {
+        boxSetores.innerHTML += `
+          <div class="checkbox-item">
+            <input type="checkbox" id="chk_${s}" value="${s}">
+            <label for="chk_${s}">${s}</label>
+          </div>
         `;
       });
 
       const tbodyProd = document.getElementById('tbodyCadProdutos');
       tbodyProd.innerHTML = '';
       produtos.forEach(p => {
-        const codProduto = p.code || p.codigo || '—';
-        const uniProduto = p.unidade || p.un || 'UN';
+        const codProduto = p.code || '—';
+        const uniProduto = p.unidade || 'UN';
         const precoProduto = parseFloat(p.preco) || 0;
+        const deptosTxt = (p.departamentos || []).join(', ') || 'Nenhum';
 
         tbodyProd.innerHTML += `
           <tr>
@@ -954,6 +1329,11 @@
             <td>${p.nome || ''}</td>
             <td>${uniProduto}</td>
             <td>R$ ${precoProduto.toFixed(2)}</td>
+            <td><small>${deptosTxt}</small></td>
+            <td>
+              <button class="btn btn-info btn-sm" onclick="editarProduto('${codProduto}')">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirProduto('${codProduto}')">Excluir</button>
+            </td>
           </tr>
         `;
       });
@@ -978,38 +1358,89 @@
       renderCadastros();
     }
 
+    function editarProduto(codigoAtual) {
+      const senha = prompt("Ação Restrita! Digite a senha de administrador:");
+      if (senha !== SENHA_ADMIN) {
+        if (senha !== null) alert("Senha incorreta!");
+        return;
+      }
+
+      const prod = produtos.find(p => p.code === codigoAtual);
+      if (prod) {
+        document.getElementById('cadCodigoOriginal').value = prod.code;
+        document.getElementById('cadCodigo').value = prod.code;
+        document.getElementById('cadNome').value = prod.nome || '';
+        document.getElementById('cadUnidade').value = prod.unidade || '';
+        document.getElementById('cadPreco').value = prod.preco || 0;
+
+        document.querySelectorAll('#checkboxesSetoresProd input').forEach(chk => {
+          chk.checked = (prod.departamentos || []).includes(chk.value);
+        });
+      }
+    }
+
+    function excluirProduto(codigoAtual) {
+      const senha = prompt("Ação Restrita! Digite a senha de administrador para excluir este produto:");
+      if (senha !== SENHA_ADMIN) {
+        if (senha !== null) alert("Senha incorreta!");
+        return;
+      }
+
+      if (confirm(`Tem certeza que deseja excluir o produto com código ${codigoAtual}?`)) {
+        produtos = produtos.filter(p => p.code !== codigoAtual);
+        salvarProdutos();
+        renderTabelaSolicitante();
+        renderCadastros();
+      }
+    }
+
+    function limparFormularioProduto() {
+      document.getElementById('cadCodigoOriginal').value = '';
+      document.getElementById('cadCodigo').value = '';
+      document.getElementById('cadNome').value = '';
+      document.getElementById('cadUnidade').value = '';
+      document.getElementById('cadPreco').value = '';
+      document.querySelectorAll('#checkboxesSetoresProd input').forEach(chk => chk.checked = false);
+    }
+
     function salvarProduto() {
+      const codigoOriginal = document.getElementById('cadCodigoOriginal').value;
       const code = document.getElementById('cadCodigo').value.trim();
       const nome = document.getElementById('cadNome').value.trim().toUpperCase();
       const unidade = document.getElementById('cadUnidade').value.trim().toUpperCase();
       const preco = parseFloat(document.getElementById('cadPreco').value) || 0;
+
+      const deptosSelecionados = [];
+      document.querySelectorAll('#checkboxesSetoresProd input:checked').forEach(chk => {
+        deptosSelecionados.push(chk.value);
+      });
 
       if (!code || !nome) {
         alert("Código e Nome são obrigatórios!");
         return;
       }
 
-      const index = produtos.findIndex(p => (p.code || p.codigo) === code);
-      if (index >= 0) {
-        produtos[index].nome = nome;
-        produtos[index].unidade = unidade;
-        produtos[index].code = code;
-        produtos[index].preco = preco;
+      const itemData = { code, nome, unidade, preco, departamentos: deptosSelecionados };
+
+      if (codigoOriginal) {
+        const index = produtos.findIndex(p => p.code === codigoOriginal);
+        if (index >= 0) produtos[index] = itemData;
       } else {
-        produtos.push({ code, nome, unidade, preco });
+        const indexExistente = produtos.findIndex(p => p.code === code);
+        if (indexExistente >= 0) {
+          if (!confirm("Já existe um produto com esse código. Deseja sobrescrevê-lo?")) return;
+          produtos[indexExistente] = itemData;
+        } else {
+          produtos.push(itemData);
+        }
       }
 
       salvarProdutos();
       renderTabelaSolicitante();
       renderCadastros();
-
-      document.getElementById('cadCodigo').value = '';
-      document.getElementById('cadNome').value = '';
-      document.getElementById('cadUnidade').value = '';
-      document.getElementById('cadPreco').value = '';
+      limparFormularioProduto();
     }
 
-    // Atualizar Badges de Notificação
     function atualizarBadges() {
       const pendentesChef = solicitacoes.filter(s => s.status === 'PENDENTE').length;
       const pendentesSec = solicitacoes.filter(s => s.status === 'APROVADO').length;
@@ -1018,7 +1449,7 @@
       document.getElementById('badgeSecretaria').textContent = pendentesSec;
     }
 
-    // Controle de Navegação das Abas
+    // Navegação por Abas
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1032,6 +1463,8 @@
           renderAprovacaoChef();
         } else if (targetId === 'tab-secretaria') {
           renderHistorico();
+        } else if (targetId === 'tab-dashboard') {
+          renderDashboard();
         } else if (targetId === 'tab-cadastros') {
           renderCadastros();
         }
