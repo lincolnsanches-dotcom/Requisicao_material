@@ -1,607 +1,386 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full bg-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Gestão de Requisições - Hortifruti</title>
-  <style>
-    :root {
-      --primary: #2e7d32;
-      --primary-hover: #1b5e20;
-      --bg-color: #f4f6f8;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --border-color: #e0e0e0;
-      --accent-orange: #ed6c02;
-      --accent-blue: #0288d1;
-    }
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts (Inter) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 20px;
-    }
-
-    header {
-      background-color: var(--primary);
-      color: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 5px;
-      flex-wrap: wrap;
-    }
-
-    .nav-tab {
-      padding: 10px 20px;
-      background: #e0e0e0;
-      border: none;
-      border-radius: 5px 5px 0 0;
-      cursor: pointer;
-      font-weight: bold;
-      color: #555;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-tab.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    .badge {
-      background: var(--accent-orange);
-      color: white;
-      border-radius: 50%;
-      padding: 2px 8px;
-      font-size: 0.8rem;
-    }
-
-    .setores-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 15px;
-      list-style: none;
-      padding: 0;
-    }
-
-    .setor-chip {
-      background-color: #f0f4f8;
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-color);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-remove-setor {
-      background: none;
-      border: none;
-      color: #d32f2f;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: bold;
-      line-height: 1;
-      padding: 2px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .btn-remove-setor:hover {
-      background-color: #ffebee;
-    }
-
-    .tab-content {
-      display: none;
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .form-control {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 0.95rem;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-      margin-top: 15px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-    }
-
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    input.qty-input {
-      width: 70px;
-      padding: 4px;
-      text-align: center;
-    }
-
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 0.8rem;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn-info {
-      background-color: var(--accent-blue);
-      color: white;
-    }
-
-    .btn-success {
-      background-color: #2e7d32;
-      color: white;
-    }
-
-    .btn-danger {
-      background-color: #d32f2f;
-      color: white;
-    }
-
-    .req-card {
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      margin-bottom: 12px;
-      background: #ffffff;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .req-header-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 18px;
-      background: #f8f9fa;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.2s;
-    }
-
-    .req-header-toggle:hover {
-      background: #f0f4f8;
-    }
-
-    .req-summary-info {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .req-summary-info strong {
-      color: #2c3e50;
-    }
-
-    .req-body {
-      display: none;
-      padding: 15px 18px;
-      border-top: 1px solid var(--border-color);
-      background: #fafafa;
-    }
-
-    .req-card.open .req-body {
-      display: block;
-    }
-
-    .accordion-icon {
-      font-size: 0.85rem;
-      transition: transform 0.3s;
-      color: #666;
-    }
-
-    .req-card.open .accordion-icon {
-      transform: rotate(180deg);
-    }
-
-    .status-badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .status-PENDENTE { background: #ffe0b2; color: #e65100; }
-    .status-APROVADO { background: #c8e6c9; color: #2e7d32; }
-    .status-CONCLUIDO { background: #bbdefb; color: #1565c0; }
-    .status-REJEITADO { background: #ffcdd2; color: #c62828; }
-
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 5px;
-      max-height: 120px;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-      padding: 10px;
-      border-radius: 4px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.85rem;
-      width: 45%;
-    }
-
-    .checkbox-item input {
-      width: auto;
-    }
-
-    .kpi-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .kpi-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-left: 5px solid var(--primary);
-      border-radius: 8px;
-      padding: 15px 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .kpi-card h4 {
-      font-size: 0.85rem;
-      color: #666;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .kpi-card .kpi-value {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: 20px;
-    }
-
-    .chart-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .chart-card h3 {
-      font-size: 1rem;
-      margin-bottom: 15px;
-      color: var(--primary);
-      border-bottom: 1px solid #f0f0f0;
-      padding-bottom: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+            }
+          }
+        }
       }
+    }
+  </script>
+
+  <style>
+    /* Transições suaves para abas e acordões */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .req-card.open .req-body { display: block; }
+    .req-card.open .accordion-icon { transform: rotate(180deg); }
+    
+    /* Personalização suave de barra de rolagem */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
   </style>
 </head>
-<body>
+<body class="font-sans antialiased text-slate-800 bg-slate-100 min-h-full flex flex-col">
 
-  <header>
-    <h1>Gestão de Requisições por Departamento</h1>
+  <!-- TOP HEADER -->
+  <header class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-emerald-600/50 rounded-lg backdrop-blur-sm border border-emerald-500/30">
+          <i class="fa-solid fa-leaf text-xl text-emerald-200"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight tracking-wide">Gestão de Requisições</h1>
+          <p class="text-xs text-emerald-100/80">Hortifruti & Departamentos</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4 text-xs font-medium">
+        <div class="flex items-center space-x-2 bg-emerald-900/40 px-3 py-1.5 rounded-full border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-emerald-100" id="headerStatusTxt">Sincronizado Supabase</span>
+        </div>
+        <div class="hidden sm:block text-emerald-100/90" id="dataAtualHeader">
+          <i class="fa-regular fa-calendar mr-1"></i> <span id="dataTxt"></span>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-tab="tab-solicitante">📋 Solicitante (Setores)</button>
-    <button class="nav-tab" data-tab="tab-chef">👨‍🍳 Aprovação Chef <span class="badge" id="badgeChef">0</span></button>
-    <button class="nav-tab" data-tab="tab-secretaria">📂 Secretaria & Histórico <span class="badge" id="badgeSecretaria">0</span></button>
-    <button class="nav-tab" data-tab="tab-dashboard">📊 Dashboard & Indicadores</button>
-    <button class="nav-tab" data-tab="tab-cadastros">⚙ Cadastros & Valores</button>
-  </div>
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow">
 
-  <!-- ABA 1: SOLICITANTE -->
-  <div id="tab-solicitante" class="tab-content active">
-    <h2>Nova Requisição de Compra</h2>
-    <form id="formSolicitante">
-      <div class="form-row" style="margin-top: 15px;">
-        <div class="form-control">
-          <label for="solSetor">Setor Solicitante:</label>
-          <select id="solSetor" required>
-            <option value="">Selecione o setor...</option>
-          </select>
-        </div>
-        <div class="form-control">
-          <label for="solData">Data da Solicitação:</label>
-          <input type="date" id="solData" required>
-        </div>
-      </div>
+    <!-- NAVEGAÇÃO EM ABAS -->
+    <nav class="flex space-x-2 border-b border-slate-200 pb-2 mb-6 overflow-x-auto" id="mainNav">
+      <button class="nav-tab active flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 bg-emerald-700 text-white shadow-sm" data-tab="tab-solicitante">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>Solicitante (Setores)</span>
+      </button>
 
-      <div class="form-group" style="margin-top: 15px;">
-        <label for="filtroProdutoSolicitante">Filtro Rápido de Produtos do Setor:</label>
-        <input type="text" id="filtroProdutoSolicitante" placeholder="Digite o nome do produto para filtrar...">
-      </div>
+      <button class="nav-tab flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-emerald-700 hover:bg-slate-200/60" data-tab="tab-chef">
+        <i class="fa-solid fa-utensils"></i>
+        <span>Aprovação Chef</span>
+        <span class="badge bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full font-bold ml-1 shadow-sm" id="badgeChef">0</span>
+      </button>
 
-      <div class="table-responsive">
-        <table>
-          <thead id="theadSolicitante"></thead>
-          <tbody id="tbodySolicitante"></tbody>
-        </table>
-      </div>
+      <button class="nav-tab flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-emerald-700 hover:bg-slate-200/60" data-tab="tab-secretaria">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Secretaria & Histórico</span>
+        <span class="badge bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full font-bold ml-1 shadow-sm" id="badgeSecretaria">0</span>
+      </button>
 
-      <!-- BOTÃO PARA INSERIR ITEM MANUAMENTE FORA DA LISTAGEM -->
-      <div style="margin-top: 12px; margin-bottom: 15px;">
-        <button type="button" class="btn btn-info" onclick="adicionarLinhaItemExtra()">➕ Adicionar Item Extra (Fora da Lista)</button>
-      </div>
+      <button class="nav-tab flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-emerald-700 hover:bg-slate-200/60" data-tab="tab-dashboard">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Dashboard & Indicadores</span>
+      </button>
 
-      <div class="form-group" style="margin-top: 15px;">
-        <label for="solObs">Observações Gerais:</label>
-        <textarea id="solObs" rows="2" placeholder="Alguma especificação especial para esta requisição..."></textarea>
+      <button class="nav-tab flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-emerald-700 hover:bg-slate-200/60" data-tab="tab-cadastros">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Cadastros & Valores</span>
+      </button>
+    </nav>
+
+    <!-- ABA 1: SOLICITANTE -->
+    <div id="tab-solicitante" class="tab-content active bg-white rounded-xl shadow-sm border border-slate-200/80 p-6">
+      <div class="border-b border-slate-100 pb-4 mb-5">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-cart-plus text-emerald-600"></i> Nova Requisição de Compra
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Selecione seu setor e preencha a quantidade desejada dos produtos.</p>
       </div>
 
-      <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Enviar Requisição ao Chef</button>
-    </form>
-  </div>
-
-  <!-- ABA 2: APROVAÇÃO CHEF -->
-  <div id="tab-chef" class="tab-content">
-    <h2>Painel de Aprovação do Chef</h2>
-    <p style="color: #666; margin-bottom: 15px;">Clique em uma requisição para expandir e revisar as quantidades e valores.</p>
-    <div id="listaAprovacaoChef"></div>
-  </div>
-
-  <!-- ABA 3: SECRETARIA -->
-  <div id="tab-secretaria" class="tab-content">
-    <h2>Histórico & Lançamentos Operacionais</h2>
-    
-    <div class="form-row" style="margin-bottom: 20px; margin-top: 15px;">
-      <div class="form-control">
-        <label for="filtroHistSetor">Filtrar por Setor:</label>
-        <select id="filtroHistSetor">
-          <option value="">Todos os Setores</option>
-        </select>
-      </div>
-      <div class="form-control">
-        <label for="filtroHistStatus">Filtrar por Status:</label>
-        <select id="filtroHistStatus">
-          <option value="">Todos</option>
-          <option value="PENDENTE">Pendente</option>
-          <option value="APROVADO">Aprovado pelo Chef</option>
-          <option value="CONCLUIDO">Concluído (Nº Oficial)</option>
-          <option value="REJEITADO">Rejeitado</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="listaHistorico"></div>
-  </div>
-
-  <!-- ABA 4: DASHBOARD -->
-  <div id="tab-dashboard" class="tab-content">
-    <h2>Dashboard & Indicadores Estratégicos</h2>
-    
-    <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 15px; margin-bottom: 20px;">
-      <div class="form-control">
-        <label for="dashFiltroPeriodo">Período:</label>
-        <select id="dashFiltroPeriodo">
-          <option value="mes">Este Mês</option>
-          <option value="3meses">Últimos 3 Meses</option>
-          <option value="tudo">Todo o Histórico</option>
-        </select>
-      </div>
-      <div class="form-control">
-        <label for="dashFiltroSetor">Setor:</label>
-        <select id="dashFiltroSetor">
-          <option value="">Todos os Setores</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="kpi-container">
-      <div class="kpi-card" style="border-left-color: #0288d1;">
-        <h4>Total de Requisições</h4>
-        <div class="kpi-value" id="kpiTotalReq">0</div>
-      </div>
-      <div class="kpi-card" style="border-left-color: #2e7d32;">
-        <h4>Gasto Total Acumulado</h4>
-        <div class="kpi-value" id="kpiGastoTotal">R$ 0,00</div>
-      </div>
-      <div class="kpi-card" style="border-left-color: #ed6c02;">
-        <h4>Ticket Médio por Pedido</h4>
-        <div class="kpi-value" id="kpiTicketMedio">R$ 0,00</div>
-      </div>
-      <div class="kpi-card" style="border-left-color: #9c27b0;">
-        <h4>Setor Mais Demandante</h4>
-        <div class="kpi-value" id="kpiSetorTop" style="font-size: 1.2rem;">-</div>
-      </div>
-    </div>
-
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h3>Evolução de Gastos</h3>
-        <canvas id="chartEvolucaoGastos"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Gastos por Setor (R$)</h3>
-        <canvas id="chartGastosSetor"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Top 10 Produtos Mais Solicitados</h3>
-        <canvas id="chartTopProdutos"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Status das Solicitações</h3>
-        <canvas id="chartStatusReq"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- ABA 5: CADASTROS -->
-  <div id="tab-cadastros" class="tab-content">
-    <h2>Gestão de Produtos & Setores</h2>
-    
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
-      <div style="flex: 1; min-width: 280px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
-        <h3>Cadastrar Novo Setor</h3>
-        <div class="form-group" style="margin-top: 10px;">
-          <input type="text" id="novoSetorNome" placeholder="Nome do Setor">
-        </div>
-        <button class="btn btn-primary" onclick="adicionarSetor()">Adicionar Setor</button>
-        
-        <h4 style="margin-top: 20px;">Setores Existentes</h4>
-        <ul id="listaSetoresCadastrados" class="setores-grid"></ul>
-      </div>
-
-      <div style="flex: 2; min-width: 320px; border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
-        <h3>Cadastrar / Editar Produto e Departamentos</h3>
-        <input type="hidden" id="cadCodigoOriginal">
-
-        <div class="form-row" style="margin-top: 10px;">
-          <div class="form-control">
-            <input type="text" id="cadCodigo" placeholder="Código">
+      <form id="formSolicitante">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="solSetor" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Setor Solicitante:</label>
+            <select id="solSetor" required class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition">
+              <option value="">Selecione o setor...</option>
+            </select>
           </div>
-          <div class="form-control">
-            <input type="text" id="cadNome" placeholder="Nome do Produto">
-          </div>
-        </div>
-        <div class="form-row" style="margin-top: 10px;">
-          <div class="form-control">
-            <input type="text" id="cadUnidade" placeholder="Unidade (Ex: KG, CX, UN)">
-          </div>
-          <div class="form-control">
-            <input type="number" step="0.01" id="cadPreco" placeholder="Preço Unitário (R$)">
+          <div>
+            <label for="solData" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Data da Solicitação:</label>
+            <input type="date" id="solData" required class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition">
           </div>
         </div>
 
-        <div class="form-group" style="margin-top: 10px;">
-          <label>Vincular aos Setores/Departamentos Solicitantes:</label>
-          <div id="checkboxesSetoresProd" class="checkbox-group"></div>
+        <div class="mb-5">
+          <label for="filtroProdutoSolicitante" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Filtro Rápido de Produtos do Setor:</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </span>
+            <input type="text" id="filtroProdutoSolicitante" placeholder="Digite o nome ou código do produto para filtrar..." class="w-full pl-9 bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition">
+          </div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button class="btn btn-primary" onclick="salvarProduto()">Salvar Produto</button>
-          <button class="btn" style="background:#888; color:#fff;" onclick="limparFormularioProduto()">Cancelar / Limpar</button>
-        </div>
-
-        <h4 style="margin-top: 20px;">Lista Geral de Produtos</h4>
-        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Unidade</th>
-                <th>Preço (R$)</th>
-                <th>Setores</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyCadProdutos"></tbody>
+        <div class="overflow-x-auto rounded-lg border border-slate-200 mb-4 shadow-sm">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead id="theadSolicitante" class="bg-slate-50 text-slate-700 uppercase text-xs font-semibold border-b border-slate-200"></thead>
+            <tbody id="tbodySolicitante" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
+
+        <div class="mb-5">
+          <button type="button" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs py-2 px-4 rounded-lg shadow-sm transition" onclick="adicionarLinhaItemExtra()">
+            <i class="fa-solid fa-plus"></i> Adicionar Item Extra (Fora da Lista)
+          </button>
+        </div>
+
+        <div class="mb-6">
+          <label for="solObs" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Observações Gerais:</label>
+          <textarea id="solObs" rows="2" placeholder="Alguma especificação especial para esta requisição..." class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition"></textarea>
+        </div>
+
+        <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition">
+          <i class="fa-solid fa-paper-plane"></i> Enviar Requisição ao Chef
+        </button>
+      </form>
+    </div>
+
+    <!-- ABA 2: APROVAÇÃO CHEF -->
+    <div id="tab-chef" class="tab-content bg-white rounded-xl shadow-sm border border-slate-200/80 p-6">
+      <div class="border-b border-slate-100 pb-4 mb-5">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-user-check text-emerald-600"></i> Painel de Aprovação do Chef
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Clique em uma requisição para expandir e revisar as quantidades e valores.</p>
+      </div>
+
+      <div id="listaAprovacaoChef" class="space-y-4"></div>
+    </div>
+
+    <!-- ABA 3: SECRETARIA -->
+    <div id="tab-secretaria" class="tab-content bg-white rounded-xl shadow-sm border border-slate-200/80 p-6">
+      <div class="border-b border-slate-100 pb-4 mb-5">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-box-archive text-emerald-600"></i> Histórico & Lançamentos Operacionais
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Consulte o histórico completo, filtre por setor ou status e atribua os números oficiais.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+        <div>
+          <label for="filtroHistSetor" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Filtrar por Setor:</label>
+          <select id="filtroHistSetor" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition">
+            <option value="">Todos os Setores</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtroHistStatus" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Filtrar por Status:</label>
+          <select id="filtroHistStatus" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-2.5 outline-none transition">
+            <option value="">Todos</option>
+            <option value="PENDENTE">Pendente</option>
+            <option value="APROVADO">Aprovado pelo Chef</option>
+            <option value="CONCLUIDO">Concluído (Nº Oficial)</option>
+            <option value="REJEITADO">Rejeitado</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listaHistorico" class="space-y-4"></div>
+    </div>
+
+    <!-- ABA 4: DASHBOARD -->
+    <div id="tab-dashboard" class="tab-content bg-white rounded-xl shadow-sm border border-slate-200/80 p-6">
+      <div class="border-b border-slate-100 pb-4 mb-5">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-emerald-600"></i> Dashboard & Indicadores Estratégicos
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Acompanhamento gráfico em tempo real do consumo e fluxo de aprovações.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+        <div>
+          <label for="dashFiltroPeriodo" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Período:</label>
+          <select id="dashFiltroPeriodo" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            <option value="mes">Este Mês</option>
+            <option value="3meses">Últimos 3 Meses</option>
+            <option value="tudo">Todo o Histórico</option>
+          </select>
+        </div>
+        <div>
+          <label for="dashFiltroSetor" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Setor:</label>
+          <select id="dashFiltroSetor" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            <option value="">Todos os Setores</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border-l-4 border-sky-500 border-t border-r border-b border-slate-200 p-4 rounded-xl shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total de Requisições</p>
+          <p class="text-2xl font-bold text-slate-800 mt-1" id="kpiTotalReq">0</p>
+        </div>
+
+        <div class="bg-white border-l-4 border-emerald-600 border-t border-r border-b border-slate-200 p-4 rounded-xl shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gasto Total Acumulado</p>
+          <p class="text-2xl font-bold text-slate-800 mt-1" id="kpiGastoTotal">R$ 0,00</p>
+        </div>
+
+        <div class="bg-white border-l-4 border-amber-500 border-t border-r border-b border-slate-200 p-4 rounded-xl shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ticket Médio por Pedido</p>
+          <p class="text-2xl font-bold text-slate-800 mt-1" id="kpiTicketMedio">R$ 0,00</p>
+        </div>
+
+        <div class="bg-white border-l-4 border-purple-600 border-t border-r border-b border-slate-200 p-4 rounded-xl shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Setor Mais Demandante</p>
+          <p class="text-lg font-bold text-slate-800 mt-1 truncate" id="kpiSetorTop">-</p>
+        </div>
+      </div>
+
+      <!-- CHARTS GRID -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-area text-emerald-600"></i> Evolução de Gastos
+          </h3>
+          <canvas id="chartEvolucaoGastos"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-bar text-sky-600"></i> Gastos por Setor (R$)
+          </h3>
+          <canvas id="chartGastosSetor"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-list-ol text-amber-600"></i> Top 10 Produtos Mais Solicitados
+          </h3>
+          <canvas id="chartTopProdutos"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-purple-600"></i> Status das Solicitações
+          </h3>
+          <canvas id="chartStatusReq"></canvas>
+        </div>
       </div>
     </div>
-  </div>
+
+    <!-- ABA 5: CADASTROS -->
+    <div id="tab-cadastros" class="tab-content bg-white rounded-xl shadow-sm border border-slate-200/80 p-6">
+      <div class="border-b border-slate-100 pb-4 mb-5">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-gears text-emerald-600"></i> Gestão de Produtos & Setores
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Gerencie os departamentos solicitantes e a tabela geral de produtos.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- BLOCO SETORES -->
+        <div class="lg:col-span-1 bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+          <h3 class="text-base font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Cadastrar Novo Setor</h3>
+          <div class="mb-3">
+            <input type="text" id="novoSetorNome" placeholder="Nome do Setor..." class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+          </div>
+          <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition" onclick="adicionarSetor()">
+            <i class="fa-solid fa-plus mr-1"></i> Adicionar Setor
+          </button>
+
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-3">Setores Existentes</h4>
+          <ul id="listaSetoresCadastrados" class="flex flex-wrap gap-2"></ul>
+        </div>
+
+        <!-- BLOCO PRODUTOS -->
+        <div class="lg:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+          <h3 class="text-base font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Cadastrar / Editar Produto e Departamentos</h3>
+          <input type="hidden" id="cadCodigoOriginal">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <input type="text" id="cadCodigo" placeholder="Código" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            </div>
+            <div>
+              <input type="text" id="cadNome" placeholder="Nome do Produto" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <input type="text" id="cadUnidade" placeholder="Unidade (Ex: KG, CX, UN)" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            </div>
+            <div>
+              <input type="number" step="0.01" id="cadPreco" placeholder="Preço Unitário (R$)" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-emerald-500 p-2.5 outline-none transition">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Vincular aos Setores/Departamentos Solicitantes:</label>
+            <div id="checkboxesSetoresProd" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-36 overflow-y-auto bg-white border border-slate-300 p-3 rounded-lg"></div>
+          </div>
+
+          <div class="flex gap-2 mb-6">
+            <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition" onclick="salvarProduto()">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Salvar Produto
+            </button>
+            <button class="bg-slate-500 hover:bg-slate-600 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition" onclick="limparFormularioProduto()">
+              Cancelar / Limpar
+            </button>
+          </div>
+
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Lista Geral de Produtos</h4>
+          <div class="overflow-x-auto rounded-lg border border-slate-200 max-h-80 overflow-y-auto bg-white shadow-sm">
+            <table class="w-full text-left text-sm text-slate-600">
+              <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-semibold sticky top-0 border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Nome</th>
+                  <th class="p-3">Unidade</th>
+                  <th class="p-3">Preço (R$)</th>
+                  <th class="p-3">Setores</th>
+                  <th class="p-3">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyCadProdutos" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -609,7 +388,6 @@
   <script>
     const SENHA_ADMIN = "1234";
 
-    // SUPABASE CONFIGURAÇÃO
     const SUPABASE_URL = 'https://rfournlztilewgbbgwze.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_I02M7FZTuopmEUNJdICX4w_3rpajSOi';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -678,6 +456,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       const hj = new Date();
       document.getElementById('solData').valueAsDate = hj;
+      
+      const txtData = document.getElementById('dataTxt');
+      if (txtData) {
+        txtData.textContent = hj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      }
 
       carregarDadosNuvem();
       ativarSincronizacaoRealtime();
@@ -709,24 +492,21 @@
 
     async function carregarDadosNuvem() {
       try {
-        // 1. Carregar Setores
-        const { data: resSetores, error: errSetores } = await supabaseClient.from('setores').select('*');
+        const { data: resSetores } = await supabaseClient.from('setores').select('*');
         if (resSetores && resSetores.length > 0) {
           setores = resSetores.map(s => s.nome);
         } else {
           setores = setoresIniciais;
         }
 
-        // 2. Carregar Produtos
-        const { data: resProdutos, error: errProdutos } = await supabaseClient.from('produtos').select('*');
+        const { data: resProdutos } = await supabaseClient.from('produtos').select('*');
         if (resProdutos && resProdutos.length > 0) {
           produtos = resProdutos;
         } else {
           produtos = produtosBase;
         }
 
-        // 3. Carregar Solicitações
-        const { data: resSolicitacoes, error: errSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
+        const { data: resSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
         if (resSolicitacoes) {
           solicitacoes = resSolicitacoes.map(s => ({
             ...s,
@@ -735,7 +515,7 @@
           }));
         }
       } catch (error) {
-        console.error("Erro ao carregar dados do Supabase, utilizando dados locais de fallback:", error);
+        console.error("Erro ao carregar dados do Supabase:", error);
         setores = setoresIniciais;
         produtos = produtosBase;
       }
@@ -798,21 +578,21 @@
 
       thead.innerHTML = `
         <tr>
-          <th>Código</th><th>Produto</th><th>Unidade</th><th>Preço Un.</th>
-          <th>Estoque</th><th>Hóspedes</th><th>Refeitório</th><th>Cambusa</th>
-          <th>Qtd. Total</th><th>Total (R$)</th>
+          <th class="p-3">Código</th><th class="p-3">Produto</th><th class="p-3">Unidade</th><th class="p-3">Preço Un.</th>
+          <th class="p-3">Estoque</th><th class="p-3">Hóspedes</th><th class="p-3">Refeitório</th><th class="p-3">Cambusa</th>
+          <th class="p-3">Qtd. Total</th><th class="p-3">Total (R$)</th>
         </tr>
       `;
 
       if (!setorSelecionado) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #777;">Por favor, selecione um setor no campo acima para carregar o catálogo de produtos correspondente.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-400">Por favor, selecione um setor no campo acima para carregar o catálogo de produtos correspondente.</td></tr>';
         return;
       }
 
       const produtosFiltrados = produtos.filter(p => p.departamentos && p.departamentos.includes(setorSelecionado));
 
       if (produtosFiltrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #777;">Nenhum produto cadastrado para este setor/departamento. Utilize o botão de Item Extra caso precise solicitar algo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-slate-400">Nenhum produto cadastrado para este setor/departamento. Utilize o botão de Item Extra caso precise solicitar algo.</td></tr>`;
         return;
       }
 
@@ -822,21 +602,22 @@
         const precoProduto = parseFloat(p.preco) || 0;
 
         const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/80 transition";
         tr.dataset.code = codProduto;
         tr.dataset.preco = precoProduto;
         tr.dataset.isExtra = "false";
 
         tr.innerHTML = `
-          <td>${codProduto}</td>
-          <td><strong>${p.nome || ''}</strong></td>
-          <td>${uniProduto}</td>
-          <td>R$ ${precoProduto.toFixed(2)}</td>
-          <td><input type="number" step="0.1" class="qty-input input-est" value="0" min="0"></td>
-          <td><input type="number" step="0.1" class="qty-input input-hosp" value="0" min="0"></td>
-          <td><input type="number" step="0.1" class="qty-input input-ref" value="0" min="0"></td>
-          <td><input type="number" step="0.1" class="qty-input input-camb" value="0" min="0"></td>
-          <td><strong class="sol-total">0.0</strong></td>
-          <td>R$ <span class="sol-valor-total">0.00</span></td>
+          <td class="p-3 font-mono text-xs">${codProduto}</td>
+          <td class="p-3 font-semibold text-slate-800">${p.nome || ''}</td>
+          <td class="p-3">${uniProduto}</td>
+          <td class="p-3">R$ ${precoProduto.toFixed(2)}</td>
+          <td class="p-3"><input type="number" step="0.1" class="qty-input input-est w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+          <td class="p-3"><input type="number" step="0.1" class="qty-input input-hosp w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+          <td class="p-3"><input type="number" step="0.1" class="qty-input input-ref w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+          <td class="p-3"><input type="number" step="0.1" class="qty-input input-camb w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+          <td class="p-3 font-bold text-slate-800"><strong class="sol-total">0.0</strong></td>
+          <td class="p-3 font-semibold text-emerald-700">R$ <span class="sol-valor-total">0.00</span></td>
         `;
 
         tbody.appendChild(tr);
@@ -850,7 +631,6 @@
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
           
-          // ALTERAÇÃO AQUI: Soma direta sem subtrair o estoque
           const total = hosp + ref + camb;
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
           tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
@@ -858,7 +638,6 @@
       });
     }
 
-    // FUNÇÃO PARA ADICIONAR UM ITEM EXTRA MANUAMENTE NA TABELA DO SOLICITANTE
     function adicionarLinhaItemExtra() {
       const setorSelecionado = document.getElementById('solSetor').value;
       if (!setorSelecionado) {
@@ -868,7 +647,6 @@
 
       const tbody = document.getElementById('tbodySolicitante');
       
-      // Limpa mensagem de "nenhum produto" se existir
       if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
         tbody.innerHTML = '';
       }
@@ -876,23 +654,24 @@
       const tempId = 'EXTRA-' + Date.now();
 
       const tr = document.createElement('tr');
+      tr.className = "bg-amber-50/40 hover:bg-amber-50/70 transition";
       tr.dataset.code = tempId;
       tr.dataset.preco = "0";
       tr.dataset.isExtra = "true";
 
       tr.innerHTML = `
-        <td><span style="color:#ed6c02; font-size:0.8rem; font-weight:bold;">EXTRA</span></td>
-        <td><input type="text" class="input-nome-extra" placeholder="Nome do produto extra..." style="width:100%; font-weight:bold;" required></td>
-        <td><input type="text" class="input-uni-extra" value="UN" style="width:60px; text-align:center;"></td>
-        <td>R$ <input type="number" step="0.01" class="input-preco-extra" value="0.00" style="width:80px;" min="0"></td>
-        <td><input type="number" step="0.1" class="qty-input input-est" value="0" min="0"></td>
-        <td><input type="number" step="0.1" class="qty-input input-hosp" value="0" min="0"></td>
-        <td><input type="number" step="0.1" class="qty-input input-ref" value="0" min="0"></td>
-        <td><input type="number" step="0.1" class="qty-input input-camb" value="0" min="0"></td>
-        <td><strong class="sol-total">0.0</strong></td>
-        <td>
+        <td class="p-3"><span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">EXTRA</span></td>
+        <td class="p-3"><input type="text" class="input-nome-extra w-full bg-white border border-slate-300 rounded p-1 text-xs font-semibold outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Nome do produto extra..." required></td>
+        <td class="p-3"><input type="text" class="input-uni-extra w-12 text-center bg-white border border-slate-300 rounded p-1 text-xs outline-none focus:ring-1 focus:ring-emerald-500" value="UN"></td>
+        <td class="p-3">R$ <input type="number" step="0.01" class="input-preco-extra w-20 bg-white border border-slate-300 rounded p-1 text-xs outline-none focus:ring-1 focus:ring-emerald-500" value="0.00" min="0"></td>
+        <td class="p-3"><input type="number" step="0.1" class="qty-input input-est w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+        <td class="p-3"><input type="number" step="0.1" class="qty-input input-hosp w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+        <td class="p-3"><input type="number" step="0.1" class="qty-input input-ref w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+        <td class="p-3"><input type="number" step="0.1" class="qty-input input-camb w-16 bg-white border border-slate-300 text-center rounded p-1 outline-none text-xs focus:ring-1 focus:ring-emerald-500" value="0" min="0"></td>
+        <td class="p-3 font-bold text-slate-800"><strong class="sol-total">0.0</strong></td>
+        <td class="p-3 font-semibold text-emerald-700">
           R$ <span class="sol-valor-total">0.00</span>
-          <button type="button" class="btn-remove-setor" title="Remover Item Extra" onclick="this.closest('tr').remove()" style="display:inline-block; margin-left:8px;">✕</button>
+          <button type="button" class="btn-remove-setor text-red-500 hover:text-red-700 ml-2 font-bold text-sm" title="Remover Item Extra" onclick="this.closest('tr').remove()">✕</button>
         </td>
       `;
 
@@ -907,7 +686,6 @@
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
 
-          // ALTERAÇÃO AQUI: Soma direta sem subtrair o estoque
           const total = hosp + ref + camb;
 
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
@@ -1011,13 +789,13 @@
       const pendentes = solicitacoes.filter(s => s.status === 'PENDENTE');
 
       if (pendentes.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhuma requisição pendente no momento.</p>';
+        container.innerHTML = '<p class="text-center text-slate-400 py-8 text-sm">Nenhuma requisição pendente no momento.</p>';
         return;
       }
 
       pendentes.forEach(req => {
         const card = document.createElement('div');
-        card.className = 'req-card';
+        card.className = 'req-card border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white transition';
 
         let itensHTML = '';
         let totalEstimadoReq = 0;
@@ -1028,57 +806,61 @@
           totalEstimadoReq += subtotalItem;
 
           itensHTML += `
-            <tr data-item-index="${index}">
-              <td><strong>${item.code}</strong> - ${item.nome}</td>
-              <td>${item.unidade}</td>
-              <td>${item.estoque}</td>
-              <td>${item.qtdPedida}</td>
-              <td>
-                <input type="number" step="0.1" class="qty-input" value="${item.qtdAprovada}" 
+            <tr data-item-index="${index}" class="hover:bg-slate-50">
+              <td class="p-3"><strong class="font-mono text-xs">${item.code}</strong> - ${item.nome}</td>
+              <td class="p-3">${item.unidade}</td>
+              <td class="p-3">${item.estoque}</td>
+              <td class="p-3">${item.qtdPedida}</td>
+              <td class="p-3">
+                <input type="number" step="0.1" class="qty-input w-20 bg-white border border-slate-300 text-center rounded p-1 text-xs outline-none focus:ring-1 focus:ring-emerald-500 font-bold" value="${item.qtdAprovada}" 
                   onchange="atualizarQtdAprovada('${req.id}', ${index}, this.value)">
               </td>
-              <td>R$ ${precoUnit.toFixed(2)}</td>
-              <td>R$ <span class="subtotal-chef">${subtotalItem.toFixed(2)}</span></td>
+              <td class="p-3">R$ ${precoUnit.toFixed(2)}</td>
+              <td class="p-3 font-semibold text-emerald-700">R$ <span class="subtotal-chef">${subtotalItem.toFixed(2)}</span></td>
             </tr>
           `;
         });
 
         card.innerHTML = `
-          <div class="req-header-toggle" onclick="toggleAccordion(this)">
-            <div class="req-summary-info">
-              <span><strong>Setor:</strong> ${req.setor}</span>
-              <span><strong>Data:</strong> ${req.data}</span>
-              <span><strong>Total:</strong> <span style="color: var(--primary); font-weight: bold;">R$ <span id="total-req-${req.id}">${totalEstimadoReq.toFixed(2)}</span></span></span>
+          <div class="req-header-toggle flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer select-none transition border-b border-slate-100" onclick="toggleAccordion(this)">
+            <div class="req-summary-info flex items-center gap-4 flex-wrap text-sm">
+              <span><strong class="text-slate-700">Setor:</strong> ${req.setor}</span>
+              <span><strong class="text-slate-700">Data:</strong> ${req.data}</span>
+              <span><strong class="text-slate-700">Total:</strong> <span class="text-emerald-700 font-bold">R$ <span id="total-req-${req.id}">${totalEstimadoReq.toFixed(2)}</span></span></span>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="status-badge status-PENDENTE">Aguardando Chef</span>
-              <span class="accordion-icon">▼</span>
+            <div class="flex items-center gap-3">
+              <span class="status-badge bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Aguardando Chef</span>
+              <span class="accordion-icon text-slate-400 text-xs transition-transform duration-200">▼</span>
             </div>
           </div>
           
-          <div class="req-body">
-            <p style="font-size: 0.85rem; margin-bottom: 12px; color: #555;"><strong>Observação:</strong> ${req.observacao || 'Nenhuma'}</p>
+          <div class="req-body hidden p-4 bg-slate-50/50">
+            <p class="text-xs text-slate-600 mb-3"><strong>Observação:</strong> ${req.observacao || 'Nenhuma'}</p>
             
-            <div class="table-responsive">
-              <table>
-                <thead>
+            <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+              <table class="w-full text-left text-sm text-slate-600">
+                <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-semibold border-b border-slate-200">
                   <tr>
-                    <th>Produto</th>
-                    <th>UN</th>
-                    <th>Estoque Informado</th>
-                    <th>Qtd. Solicitada</th>
-                    <th>Qtd. Aprovada pelo Chef</th>
-                    <th>Preço Un.</th>
-                    <th>Subtotal (R$)</th>
+                    <th class="p-3">Produto</th>
+                    <th class="p-3">UN</th>
+                    <th class="p-3">Estoque Informado</th>
+                    <th class="p-3">Qtd. Solicitada</th>
+                    <th class="p-3">Qtd. Aprovada pelo Chef</th>
+                    <th class="p-3">Preço Un.</th>
+                    <th class="p-3">Subtotal (R$)</th>
                   </tr>
                 </thead>
-                <tbody>${itensHTML}</tbody>
+                <tbody class="divide-y divide-slate-100">${itensHTML}</tbody>
               </table>
             </div>
 
-            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-              <button class="btn btn-danger" onclick="decisaoChef('${req.id}', 'REJEITADO')">Rejeitar Requisição</button>
-              <button class="btn btn-primary" onclick="decisaoChef('${req.id}', 'APROVADO')">Aprovar e Enviar à Secretaria</button>
+            <div class="mt-4 flex gap-2 justify-end">
+              <button class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs py-2 px-4 rounded-lg shadow-sm transition" onclick="decisaoChef('${req.id}', 'REJEITADO')">
+                <i class="fa-solid fa-xmark mr-1"></i> Rejeitar Requisição
+              </button>
+              <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-4 rounded-lg shadow-sm transition" onclick="decisaoChef('${req.id}', 'APROVADO')">
+                <i class="fa-solid fa-check mr-1"></i> Aprovar e Enviar à Secretaria
+              </button>
             </div>
           </div>
         `;
@@ -1097,6 +879,20 @@
       if (req && req.itens[itemIndex]) {
         const novaQtd = parseFloat(valor) || 0;
         req.itens[itemIndex].qtdAprovada = novaQtd;
+
+        // Atualização em tempo real na interface sem perder a posição de scroll
+        const trItem = document.querySelector(`tr[data-item-index="${itemIndex}"]`);
+        if (trItem) {
+          const subtotalElem = trItem.querySelector('.subtotal-chef');
+          const precoUnit = parseFloat(req.itens[itemIndex].preco) || 0;
+          const novoSubtotal = novaQtd * precoUnit;
+          if (subtotalElem) subtotalElem.textContent = novoSubtotal.toFixed(2);
+        }
+
+        let novoTotalGeral = req.itens.reduce((acc, item) => acc + (item.qtdAprovada * (parseFloat(item.preco) || 0)), 0);
+        const totalElem = document.getElementById(`total-req-${reqId}`);
+        if (totalElem) totalElem.textContent = novoTotalGeral.toFixed(2);
+
         await salvarSolicitacaoNuvem(req);
       }
     }
@@ -1123,13 +919,13 @@
       });
 
       if (filtrados.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Nenhum registro encontrado.</p>';
+        container.innerHTML = '<p class="text-center text-slate-400 py-8 text-sm">Nenhum registro encontrado.</p>';
         return;
       }
 
       filtrados.slice().reverse().forEach(req => {
         const card = document.createElement('div');
-        card.className = 'req-card';
+        card.className = 'req-card border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white transition';
 
         let totalGeralReq = 0;
         let itensHTML = '';
@@ -1138,65 +934,74 @@
           const subtotal = item.qtdAprovada * precoUnit;
           totalGeralReq += subtotal;
           itensHTML += `
-            <tr>
-              <td>${item.code}</td>
-              <td>${item.nome}</td>
-              <td>${item.unidade}</td>
-              <td>${item.qtdPedida}</td>
-              <td><strong>${item.qtdAprovada}</strong></td>
-              <td>R$ ${precoUnit.toFixed(2)}</td>
-              <td>R$ ${subtotal.toFixed(2)}</td>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-mono text-xs">${item.code}</td>
+              <td class="p-3 font-semibold text-slate-800">${item.nome}</td>
+              <td class="p-3">${item.unidade}</td>
+              <td class="p-3">${item.qtdPedida}</td>
+              <td class="p-3 font-bold text-slate-800">${item.qtdAprovada}</td>
+              <td class="p-3">R$ ${precoUnit.toFixed(2)}</td>
+              <td class="p-3 font-semibold text-emerald-700">R$ ${subtotal.toFixed(2)}</td>
             </tr>
           `;
         });
 
         const acaoSecretaria = req.status === 'APROVADO' ? `
-          <div style="margin-top: 15px; background: #e3f2fd; padding: 10px; border-radius: 4px; display: flex; gap: 10px; align-items: center;">
-            <label>Atribuir Nº de Requisição Oficial:</label>
-            <input type="text" id="numOficial-${req.id}" placeholder="Ex: REQ-2026-001" style="width: 200px;">
-            <button class="btn btn-info" onclick="concluirSecretaria('${req.id}')">Concluir / Registrar</button>
+          <div class="mt-4 bg-sky-50 border border-sky-200 p-3 rounded-lg flex flex-wrap gap-3 items-center">
+            <label class="text-xs font-semibold text-sky-900">Atribuir Nº de Requisição Oficial:</label>
+            <input type="text" id="numOficial-${req.id}" placeholder="Ex: REQ-2026-001" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none focus:ring-1 focus:ring-sky-500 w-48">
+            <button class="bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs py-2 px-3 rounded-lg shadow-sm transition" onclick="concluirSecretaria('${req.id}')">
+              <i class="fa-solid fa-check-double mr-1"></i> Concluir / Registrar
+            </button>
           </div>
         ` : '';
 
+        let badgeClass = "bg-amber-100 text-amber-800";
+        if (req.status === 'APROVADO') badgeClass = "bg-emerald-100 text-emerald-800";
+        if (req.status === 'CONCLUIDO') badgeClass = "bg-sky-100 text-sky-800";
+        if (req.status === 'REJEITADO') badgeClass = "bg-red-100 text-red-800";
+
         card.innerHTML = `
-          <div class="req-header-toggle" onclick="toggleAccordion(this)">
-            <div class="req-summary-info">
-              <span><strong>Setor:</strong> ${req.setor}</span>
-              <span><strong>Data:</strong> ${req.data}</span>
-              <span><strong>Nº Oficial:</strong> ${req.numeroOficial || 'Pendente'}</span>
-              <span><strong>Total:</strong> <span style="color: var(--primary); font-weight: bold;">R$ ${totalGeralReq.toFixed(2)}</span></span>
+          <div class="req-header-toggle flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer select-none transition border-b border-slate-100" onclick="toggleAccordion(this)">
+            <div class="req-summary-info flex items-center gap-4 flex-wrap text-sm">
+              <span><strong class="text-slate-700">Setor:</strong> ${req.setor}</span>
+              <span><strong class="text-slate-700">Data:</strong> ${req.data}</span>
+              <span><strong class="text-slate-700">Nº Oficial:</strong> ${req.numeroOficial || 'Pendente'}</span>
+              <span><strong class="text-slate-700">Total:</strong> <span class="text-emerald-700 font-bold">R$ ${totalGeralReq.toFixed(2)}</span></span>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="status-badge status-${req.status}">${req.status}</span>
-              <span class="accordion-icon">▼</span>
+            <div class="flex items-center gap-3">
+              <span class="status-badge ${badgeClass} text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">${req.status}</span>
+              <span class="accordion-icon text-slate-400 text-xs transition-transform duration-200">▼</span>
             </div>
           </div>
 
-          <div class="req-body">
-            <p style="font-size: 0.85rem; margin-bottom: 5px;"><strong>Enviado em:</strong> ${req.dataEnvio}</p>
-            <p style="font-size: 0.85rem; margin-bottom: 10px;"><strong>Obs:</strong> ${req.observacao || 'Nenhuma'}</p>
+          <div class="req-body hidden p-4 bg-slate-50/50">
+            <p class="text-xs text-slate-500 mb-1"><strong>Enviado em:</strong> ${req.dataEnvio}</p>
+            <p class="text-xs text-slate-600 mb-3"><strong>Obs:</strong> ${req.observacao || 'Nenhuma'}</p>
             
-            <div class="table-responsive">
-              <table>
-                <thead>
+            <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+              <table class="w-full text-left text-sm text-slate-600">
+                <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-semibold border-b border-slate-200">
                   <tr>
-                    <th>Cód.</th>
-                    <th>Produto</th>
-                    <th>UN</th>
-                    <th>Qtd. Solicitada</th>
-                    <th>Qtd. Aprovada</th>
-                    <th>Preço Un.</th>
-                    <th>Total</th>
+                    <th class="p-3">Cód.</th>
+                    <th class="p-3">Produto</th>
+                    <th class="p-3">UN</th>
+                    <th class="p-3">Qtd. Solicitada</th>
+                    <th class="p-3">Qtd. Aprovada</th>
+                    <th class="p-3">Preço Un.</th>
+                    <th class="p-3">Total</th>
                   </tr>
                 </thead>
-                <tbody>${itensHTML}</tbody>
+                <tbody class="divide-y divide-slate-100">${itensHTML}</tbody>
               </table>
             </div>
 
             ${acaoSecretaria}
 
-            <div style="margin-top: 15px; text-align: right;">
-              <button class="btn btn-success btn-sm" onclick="exportarExcel('${req.id}')">📥 Exportar para Excel</button>
+            <div class="mt-4 text-right">
+              <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3 rounded-lg shadow-sm transition inline-flex items-center gap-1" onclick="exportarExcel('${req.id}')">
+                <i class="fa-solid fa-file-excel"></i> Exportar para Excel
+              </button>
             </div>
           </div>
         `;
@@ -1324,8 +1129,8 @@
           datasets: [{
             label: 'Gastos (R$)',
             data: valoresEvolucao.length ? valoresEvolucao : [0],
-            borderColor: '#2e7d32',
-            backgroundColor: 'rgba(46, 125, 50, 0.1)',
+            borderColor: '#059669',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
             fill: true,
             tension: 0.3
           }]
@@ -1365,7 +1170,7 @@
           datasets: [{
             label: 'Quantidade Solicitada',
             data: qtdsProd.length ? qtdsProd : [0],
-            backgroundColor: '#ed6c02'
+            backgroundColor: '#f59e0b'
           }]
         },
         options: { responsive: true }
@@ -1383,7 +1188,7 @@
               statusContagem['CONCLUIDO'],
               statusContagem['REJEITADO']
             ],
-            backgroundColor: ['#ed6c02', '#2e7d32', '#0288d1', '#d32f2f']
+            backgroundColor: ['#f59e0b', '#10b981', '#0288d1', '#ef4444']
           }]
         },
         options: { responsive: true }
@@ -1393,11 +1198,11 @@
     function renderCadastros() {
       const ulSetores = document.getElementById('listaSetoresCadastrados');
       ulSetores.innerHTML = '';
-      setores.forEach((s, index) => {
+      setores.forEach((s) => {
         ulSetores.innerHTML += `
-          <li class="setor-chip">
+          <li class="bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
             <span>${s}</span>
-            <button class="btn-remove-setor" title="Remover Setor" onclick="removerSetor('${s}')">✕</button>
+            <button class="text-red-500 hover:text-red-700 font-bold" title="Remover Setor" onclick="removerSetor('${s}')">✕</button>
           </li>
         `;
       });
@@ -1406,9 +1211,9 @@
       boxSetores.innerHTML = '';
       setores.forEach(s => {
         boxSetores.innerHTML += `
-          <div class="checkbox-item">
-            <input type="checkbox" id="chk_${s}" value="${s}">
-            <label for="chk_${s}">${s}</label>
+          <div class="flex items-center gap-2 text-xs">
+            <input type="checkbox" id="chk_${s}" value="${s}" class="rounded text-emerald-600 focus:ring-emerald-500">
+            <label for="chk_${s}" class="text-slate-700">${s}</label>
           </div>
         `;
       });
@@ -1422,15 +1227,15 @@
         const deptosTxt = (p.departamentos || []).join(', ') || 'Nenhum';
 
         tbodyProd.innerHTML += `
-          <tr>
-            <td>${codProduto}</td>
-            <td>${p.nome || ''}</td>
-            <td>${uniProduto}</td>
-            <td>R$ ${precoProduto.toFixed(2)}</td>
-            <td><small>${deptosTxt}</small></td>
-            <td>
-              <button class="btn btn-info btn-sm" onclick="editarProduto('${codProduto}')">Editar</button>
-              <button class="btn btn-danger btn-sm" onclick="excluirProduto('${codProduto}')">Excluir</button>
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 font-mono text-xs">${codProduto}</td>
+            <td class="p-3 font-semibold text-slate-800">${p.nome || ''}</td>
+            <td class="p-3">${uniProduto}</td>
+            <td class="p-3">R$ ${precoProduto.toFixed(2)}</td>
+            <td class="p-3"><small class="text-slate-500">${deptosTxt}</small></td>
+            <td class="p-3 flex gap-1">
+              <button class="bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs py-1 px-2.5 rounded shadow-sm transition" onclick="editarProduto('${codProduto}')">Editar</button>
+              <button class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs py-1 px-2.5 rounded shadow-sm transition" onclick="excluirProduto('${codProduto}')">Excluir</button>
             </td>
           </tr>
         `;
@@ -1528,10 +1333,15 @@
 
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => {
+          t.classList.remove('active', 'bg-emerald-700', 'text-white', 'shadow-sm');
+          t.classList.add('text-slate-600', 'hover:text-emerald-700', 'hover:bg-slate-200/60');
+        });
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-        this.classList.add('active');
+        this.classList.add('active', 'bg-emerald-700', 'text-white', 'shadow-sm');
+        this.classList.remove('text-slate-600', 'hover:text-emerald-700', 'hover:bg-slate-200/60');
+
         const targetId = this.getAttribute('data-tab');
         document.getElementById(targetId).classList.add('active');
 
