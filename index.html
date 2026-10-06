@@ -599,9 +599,15 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const SENHA_ADMIN = "1234";
+
+    // SUPABASE CONFIGURAÇÃO
+    const SUPABASE_URL = 'rfournlztilewgbbgwze';
+    const SUPABASE_KEY = 'sb_publishable_I02M7FZTuopmEUNJdICX4w_3rpajSOi';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const setoresIniciais = [
       "HORTIFRUTI", "COZINHA CENTRAL", "AÇOUGUE", "CAFÉ DA MANHÃ",
@@ -655,9 +661,9 @@
       { code: "1133", nome: "TOMATE CEREJA", unidade: "KG", preco: 19.90, departamentos: ["HORTIFRUTI"] }
     ];
 
-    let setores = JSON.parse(localStorage.getItem('sys_setores')) || setoresIniciais;
-    let produtos = JSON.parse(localStorage.getItem('sys_produtos')) || produtosBase;
-    let solicitacoes = JSON.parse(localStorage.getItem('sys_solicitacoes')) || [];
+    let setores = [];
+    let produtos = [];
+    let solicitacoes = [];
 
     let chartEvolucao = null;
     let chartSetores = null;
@@ -668,12 +674,8 @@
       const hj = new Date();
       document.getElementById('solData').valueAsDate = hj;
 
-      renderSelectSetores();
-      renderTabelaSolicitante();
-      renderAprovacaoChef();
-      renderHistorico();
-      renderCadastros();
-      atualizarBadges();
+      carregarDadosNuvem();
+      ativarSincronizacaoRealtime();
 
       document.getElementById('solSetor').addEventListener('change', renderTabelaSolicitante);
 
@@ -693,9 +695,71 @@
       document.getElementById('dashFiltroSetor').addEventListener('change', renderDashboard);
     });
 
-    function salvarSetores() { localStorage.setItem('sys_setores', JSON.stringify(setores)); }
-    function salvarProdutos() { localStorage.setItem('sys_produtos', JSON.stringify(produtos)); }
-    function salvarSolicitacoes() { localStorage.setItem('sys_solicitacoes', JSON.stringify(solicitacoes)); }
+    async function carregarDadosNuvem() {
+      // 1. Carregar Setores
+      const { data: resSetores } = await supabaseClient.from('setores').select('*');
+      if (resSetores && resSetores.length > 0) {
+        setores = resSetores.map(s => s.nome);
+      } else {
+        setores = setoresIniciais;
+        // Salvar setores iniciais na nuvem se a tabela estiver vazia
+        for (const nomeSetor of setoresIniciais) {
+          await supabaseClient.from('setores').insert([{ nome: nomeSetor }]);
+        }
+      }
+
+      // 2. Carregar Produtos
+      const { data: resProdutos } = await supabaseClient.from('produtos').select('*');
+      if (resProdutos && resProdutos.length > 0) {
+        produtos = resProdutos;
+      } else {
+        produtos = produtosBase;
+        // Salvar produtos iniciais na nuvem se a tabela estiver vazia
+        await supabaseClient.from('produtos').insert(produtosBase);
+      }
+
+      // 3. Carregar Solicitações
+      const { data: resSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
+      if (resSolicitacoes) {
+        solicitacoes = resSolicitacoes.map(s => ({
+          ...s,
+          numeroOficial: s.numero_oficial,
+          dataEnvio: s.data_envio
+        }));
+      }
+
+      renderSelectSetores();
+      renderTabelaSolicitante();
+      renderAprovacaoChef();
+      renderHistorico();
+      renderCadastros();
+      atualizarBadges();
+    }
+
+    function ativarSincronizacaoRealtime() {
+      supabaseClient
+        .channel('alteracoes-nuvem')
+        .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+          carregarDadosNuvem();
+        })
+        .subscribe();
+    }
+
+    async function salvarSolicitacaoNuvem(novaSolicitacao) {
+      const payload = {
+        id: novaSolicitacao.id,
+        numero_oficial: novaSolicitacao.numeroOficial || '',
+        setor: novaSolicitacao.setor,
+        data: novaSolicitacao.data,
+        observacao: novaSolicitacao.observacao || '',
+        status: novaSolicitacao.status,
+        data_envio: novaSolicitacao.dataEnvio,
+        itens: novaSolicitacao.itens
+      };
+
+      await supabaseClient.from('solicitacoes').upsert([payload]);
+      await carregarDadosNuvem();
+    }
 
     function renderSelectSetores() {
       const selSol = document.getElementById('solSetor');
@@ -782,7 +846,7 @@
       });
     }
 
-    document.getElementById('formSolicitante').addEventListener('submit', function(e) {
+    document.getElementById('formSolicitante').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const setor = document.getElementById('solSetor').value;
@@ -839,16 +903,12 @@
         itens: itens
       };
 
-      solicitacoes.push(novaSolicitacao);
-      salvarSolicitacoes();
+      await salvarSolicitacaoNuvem(novaSolicitacao);
 
       alert("Requisição enviada com sucesso ao Chef para aprovação!");
 
       this.reset();
       renderTabelaSolicitante();
-      renderAprovacaoChef();
-      renderHistorico();
-      atualizarBadges();
     });
 
     function renderAprovacaoChef() {
@@ -939,40 +999,20 @@
       card.classList.toggle('open');
     }
 
-    function atualizarQtdAprovada(reqId, itemIndex, valor) {
+    async function atualizarQtdAprovada(reqId, itemIndex, valor) {
       const req = solicitacoes.find(s => s.id === reqId);
       if (req && req.itens[itemIndex]) {
         const novaQtd = parseFloat(valor) || 0;
         req.itens[itemIndex].qtdAprovada = novaQtd;
-        salvarSolicitacoes();
-
-        const preco = parseFloat(req.itens[itemIndex].preco) || 0;
-        const novoSubtotal = novaQtd * preco;
-
-        let totalGeral = 0;
-        req.itens.forEach(it => {
-          totalGeral += (it.qtdAprovada * (parseFloat(it.preco) || 0));
-        });
-
-        const card = document.querySelector(`#total-req-${reqId}`).closest('.req-card');
-        if (card) {
-          const row = card.querySelector(`tr[data-item-index="${itemIndex}"]`);
-          if (row) {
-            row.querySelector('.subtotal-chef').textContent = novoSubtotal.toFixed(2);
-          }
-          document.getElementById(`total-req-${reqId}`).textContent = totalGeral.toFixed(2);
-        }
+        await salvarSolicitacaoNuvem(req);
       }
     }
 
-    function decisaoChef(reqId, novoStatus) {
+    async function decisaoChef(reqId, novoStatus) {
       const req = solicitacoes.find(s => s.id === reqId);
       if (req) {
         req.status = novoStatus;
-        salvarSolicitacoes();
-        renderAprovacaoChef();
-        renderHistorico();
-        atualizarBadges();
+        await salvarSolicitacaoNuvem(req);
       }
     }
 
@@ -1072,7 +1112,7 @@
       });
     }
 
-    function concluirSecretaria(reqId) {
+    async function concluirSecretaria(reqId) {
       const numInput = document.getElementById(`numOficial-${reqId}`);
       const valorNum = numInput ? numInput.value.trim() : '';
 
@@ -1085,9 +1125,7 @@
       if (req) {
         req.numeroOficial = valorNum;
         req.status = 'CONCLUIDO';
-        salvarSolicitacoes();
-        renderHistorico();
-        atualizarBadges();
+        await salvarSolicitacaoNuvem(req);
       }
     }
 
@@ -1266,7 +1304,7 @@
         ulSetores.innerHTML += `
           <li class="setor-chip">
             <span>${s}</span>
-            <button class="btn-remove-setor" title="Remover Setor" onclick="removerSetor(${index})">✕</button>
+            <button class="btn-remove-setor" title="Remover Setor" onclick="removerSetor('${s}')">✕</button>
           </li>
         `;
       });
@@ -1306,23 +1344,19 @@
       });
     }
 
-    function adicionarSetor() {
+    async function adicionarSetor() {
       const input = document.getElementById('novoSetorNome');
       const nome = input.value.trim().toUpperCase();
       if (nome && !setores.includes(nome)) {
-        setores.push(nome);
-        salvarSetores();
+        await supabaseClient.from('setores').insert([{ nome }]);
         input.value = '';
-        renderSelectSetores();
-        renderCadastros();
+        await carregarDadosNuvem();
       }
     }
 
-    function removerSetor(index) {
-      setores.splice(index, 1);
-      salvarSetores();
-      renderSelectSetores();
-      renderCadastros();
+    async function removerSetor(nomeSetor) {
+      await supabaseClient.from('setores').delete().eq('nome', nomeSetor);
+      await carregarDadosNuvem();
     }
 
     function editarProduto(codigoAtual) {
@@ -1346,7 +1380,7 @@
       }
     }
 
-    function excluirProduto(codigoAtual) {
+    async function excluirProduto(codigoAtual) {
       const senha = prompt("Ação Restrita! Digite a senha de administrador para excluir este produto:");
       if (senha !== SENHA_ADMIN) {
         if (senha !== null) alert("Senha incorreta!");
@@ -1354,10 +1388,8 @@
       }
 
       if (confirm(`Tem certeza que deseja excluir o produto com código ${codigoAtual}?`)) {
-        produtos = produtos.filter(p => p.code !== codigoAtual);
-        salvarProdutos();
-        renderTabelaSolicitante();
-        renderCadastros();
+        await supabaseClient.from('produtos').delete().eq('code', codigoAtual);
+        await carregarDadosNuvem();
       }
     }
 
@@ -1370,8 +1402,7 @@
       document.querySelectorAll('#checkboxesSetoresProd input').forEach(chk => chk.checked = false);
     }
 
-    function salvarProduto() {
-      const codigoOriginal = document.getElementById('cadCodigoOriginal').value;
+    async function salvarProduto() {
       const code = document.getElementById('cadCodigo').value.trim();
       const nome = document.getElementById('cadNome').value.trim().toUpperCase();
       const unidade = document.getElementById('cadUnidade').value.trim().toUpperCase();
@@ -1389,22 +1420,8 @@
 
       const itemData = { code, nome, unidade, preco, departamentos: deptosSelecionados };
 
-      if (codigoOriginal) {
-        const index = produtos.findIndex(p => p.code === codigoOriginal);
-        if (index >= 0) produtos[index] = itemData;
-      } else {
-        const indexExistente = produtos.findIndex(p => p.code === code);
-        if (indexExistente >= 0) {
-          if (!confirm("Já existe um produto com esse código. Deseja sobrescrevê-lo?")) return;
-          produtos[indexExistente] = itemData;
-        } else {
-          produtos.push(itemData);
-        }
-      }
-
-      salvarProdutos();
-      renderTabelaSolicitante();
-      renderCadastros();
+      await supabaseClient.from('produtos').upsert([itemData]);
+      await carregarDadosNuvem();
       limparFormularioProduto();
     }
 
