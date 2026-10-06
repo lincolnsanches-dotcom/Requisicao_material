@@ -429,6 +429,11 @@
         </table>
       </div>
 
+      <!-- BOTÃO PARA INSERIR ITEM MANUAMENTE FORA DA LISTAGEM -->
+      <div style="margin-top: 12px; margin-bottom: 15px;">
+        <button type="button" class="btn btn-info" onclick="adicionarLinhaItemExtra()">➕ Adicionar Item Extra (Fora da Lista)</button>
+      </div>
+
       <div class="form-group" style="margin-top: 15px;">
         <label for="solObs">Observações Gerais:</label>
         <textarea id="solObs" rows="2" placeholder="Alguma especificação especial para esta requisição..."></textarea>
@@ -682,8 +687,15 @@
       document.getElementById('filtroProdutoSolicitante').addEventListener('input', function(e) {
         const termo = e.target.value.toLowerCase();
         document.querySelectorAll('#tbodySolicitante tr').forEach(tr => {
-          const nome = tr.children[1].textContent.toLowerCase();
-          const code = tr.children[0].textContent.toLowerCase();
+          const celulaNome = tr.children[1];
+          const celulaCode = tr.children[0];
+          
+          if (!celulaNome || !celulaCode) return;
+          
+          const inputExtra = celulaNome.querySelector('input');
+          const nome = inputExtra ? inputExtra.value.toLowerCase() : celulaNome.textContent.toLowerCase();
+          const code = celulaCode.textContent.toLowerCase();
+          
           tr.style.display = (nome.includes(termo) || code.includes(termo)) ? '' : 'none';
         });
       });
@@ -696,44 +708,44 @@
     });
 
     async function carregarDadosNuvem() {
-  try {
-    // 1. Carregar Setores
-    const { data: resSetores, error: errSetores } = await supabaseClient.from('setores').select('*');
-    if (resSetores && resSetores.length > 0) {
-      setores = resSetores.map(s => s.nome);
-    } else {
-      setores = setoresIniciais;
-    }
+      try {
+        // 1. Carregar Setores
+        const { data: resSetores, error: errSetores } = await supabaseClient.from('setores').select('*');
+        if (resSetores && resSetores.length > 0) {
+          setores = resSetores.map(s => s.nome);
+        } else {
+          setores = setoresIniciais;
+        }
 
-    // 2. Carregar Produtos
-    const { data: resProdutos, error: errProdutos } = await supabaseClient.from('produtos').select('*');
-    if (resProdutos && resProdutos.length > 0) {
-      produtos = resProdutos;
-    } else {
-      produtos = produtosBase;
-    }
+        // 2. Carregar Produtos
+        const { data: resProdutos, error: errProdutos } = await supabaseClient.from('produtos').select('*');
+        if (resProdutos && resProdutos.length > 0) {
+          produtos = resProdutos;
+        } else {
+          produtos = produtosBase;
+        }
 
-    // 3. Carregar Solicitações
-    const { data: resSolicitacoes, error: errSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
-    if (resSolicitacoes) {
-      solicitacoes = resSolicitacoes.map(s => ({
-        ...s,
-        numeroOficial: s.numero_oficial,
-        dataEnvio: s.data_envio
-      }));
-    }
-  } catch (error) {
-    console.error("Erro ao carregar dados do Supabase, utilizando dados locais de fallback:", error);
-    setores = setoresIniciais;
-    produtos = produtosBase;
-  }
+        // 3. Carregar Solicitações
+        const { data: resSolicitacoes, error: errSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
+        if (resSolicitacoes) {
+          solicitacoes = resSolicitacoes.map(s => ({
+            ...s,
+            numeroOficial: s.numero_oficial,
+            dataEnvio: s.data_envio
+          }));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do Supabase, utilizando dados locais de fallback:", error);
+        setores = setoresIniciais;
+        produtos = produtosBase;
+      }
 
-  renderSelectSetores();
-  renderTabelaSolicitante();
-  renderAprovacaoChef();
-  renderHistorico();
-  renderCadastros();
-  atualizarBadges();
+      renderSelectSetores();
+      renderTabelaSolicitante();
+      renderAprovacaoChef();
+      renderHistorico();
+      renderCadastros();
+      atualizarBadges();
     }
 
     function ativarSincronizacaoRealtime() {
@@ -800,7 +812,7 @@
       const produtosFiltrados = produtos.filter(p => p.departamentos && p.departamentos.includes(setorSelecionado));
 
       if (produtosFiltrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #777;">Nenhum produto cadastrado para este setor/departamento.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #777;">Nenhum produto cadastrado para este setor/departamento. Utilize o botão de Item Extra caso precise solicitar algo.</td></tr>`;
         return;
       }
 
@@ -812,6 +824,7 @@
         const tr = document.createElement('tr');
         tr.dataset.code = codProduto;
         tr.dataset.preco = precoProduto;
+        tr.dataset.isExtra = "false";
 
         tr.innerHTML = `
           <td>${codProduto}</td>
@@ -846,6 +859,65 @@
       });
     }
 
+    // FUNÇÃO PARA ADICIONAR UM ITEM EXTRA MANUAMENTE NA TABELA DO SOLICITANTE
+    function adicionarLinhaItemExtra() {
+      const setorSelecionado = document.getElementById('solSetor').value;
+      if (!setorSelecionado) {
+        alert("Por favor, selecione primeiro o setor solicitante!");
+        return;
+      }
+
+      const tbody = document.getElementById('tbodySolicitante');
+      
+      // Limpa mensagem de "nenhum produto" se existir
+      if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
+        tbody.innerHTML = '';
+      }
+
+      const tempId = 'EXTRA-' + Date.now();
+
+      const tr = document.createElement('tr');
+      tr.dataset.code = tempId;
+      tr.dataset.preco = "0";
+      tr.dataset.isExtra = "true";
+
+      tr.innerHTML = `
+        <td><span style="color:#ed6c02; font-size:0.8rem; font-weight:bold;">EXTRA</span></td>
+        <td><input type="text" class="input-nome-extra" placeholder="Nome do produto extra..." style="width:100%; font-weight:bold;" required></td>
+        <td><input type="text" class="input-uni-extra" value="UN" style="width:60px; text-align:center;"></td>
+        <td>R$ <input type="number" step="0.01" class="input-preco-extra" value="0.00" style="width:80px;" min="0"></td>
+        <td><input type="number" step="0.1" class="qty-input input-est" value="0" min="0"></td>
+        <td><input type="number" step="0.1" class="qty-input input-hosp" value="0" min="0"></td>
+        <td><input type="number" step="0.1" class="qty-input input-ref" value="0" min="0"></td>
+        <td><input type="number" step="0.1" class="qty-input input-camb" value="0" min="0"></td>
+        <td><strong class="sol-total">0.0</strong></td>
+        <td>
+          R$ <span class="sol-valor-total">0.00</span>
+          <button type="button" class="btn-remove-setor" title="Remover Item Extra" onclick="this.closest('tr').remove()" style="display:inline-block; margin-left:8px;">✕</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+
+      tr.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+          const preco = parseFloat(tr.querySelector('.input-preco-extra').value) || 0;
+          tr.dataset.preco = preco;
+
+          const est = parseFloat(tr.querySelector('.input-est').value) || 0;
+          const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
+          const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
+          const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
+
+          const totalCalculado = (hosp + ref + camb) - est;
+          const total = Math.max(0, totalCalculado);
+
+          tr.querySelector('.sol-total').textContent = total.toFixed(1);
+          tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
+        });
+      });
+    }
+
     document.getElementById('formSolicitante').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -864,6 +936,7 @@
         const code = tr.dataset.code;
         if (!code) return;
 
+        const isExtra = tr.dataset.isExtra === "true";
         const est = parseFloat(tr.querySelector('.input-est').value) || 0;
         const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
         const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
@@ -871,12 +944,34 @@
         const total = parseFloat(tr.querySelector('.sol-total').textContent) || 0;
 
         if (total > 0) {
-          const prodObj = produtos.find(p => p.code === code);
+          let nomeItem = '';
+          let unidadeItem = 'UN';
+          let precoItem = 0;
+
+          if (isExtra) {
+            const inputNome = tr.querySelector('.input-nome-extra');
+            nomeItem = inputNome ? inputNome.value.trim().toUpperCase() : '';
+            if (!nomeItem) {
+              alert("Por favor, informe o nome para o item extra inserido!");
+              return;
+            }
+            nomeItem += " (EXTRA)";
+            const inputUni = tr.querySelector('.input-uni-extra');
+            unidadeItem = inputUni ? inputUni.value.trim().toUpperCase() || 'UN' : 'UN';
+            const inputPreco = tr.querySelector('.input-preco-extra');
+            precoItem = inputPreco ? (parseFloat(inputPreco.value) || 0) : 0;
+          } else {
+            const prodObj = produtos.find(p => p.code === code);
+            nomeItem = prodObj ? prodObj.nome : code;
+            unidadeItem = prodObj ? prodObj.unidade : 'UN';
+            precoItem = prodObj ? (parseFloat(prodObj.preco) || 0) : 0;
+          }
+
           itens.push({
             code: code,
-            nome: prodObj ? prodObj.nome : code,
-            unidade: prodObj ? prodObj.unidade : 'UN',
-            preco: prodObj ? (parseFloat(prodObj.preco) || 0) : 0,
+            nome: nomeItem,
+            unidade: unidadeItem,
+            preco: precoItem,
             estoque: est,
             hospedes: hosp,
             refeitorio: ref,
