@@ -605,7 +605,7 @@
     const SENHA_ADMIN = "1234";
 
     // SUPABASE CONFIGURAÇÃO
-    const SUPABASE_URL = 'rfournlztilewgbbgwze';
+    const SUPABASE_URL = 'https://rfournlztilewgbbgwze.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_I02M7FZTuopmEUNJdICX4w_3rpajSOi';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -696,44 +696,44 @@
     });
 
     async function carregarDadosNuvem() {
-      // 1. Carregar Setores
-      const { data: resSetores } = await supabaseClient.from('setores').select('*');
-      if (resSetores && resSetores.length > 0) {
-        setores = resSetores.map(s => s.nome);
-      } else {
-        setores = setoresIniciais;
-        // Salvar setores iniciais na nuvem se a tabela estiver vazia
-        for (const nomeSetor of setoresIniciais) {
-          await supabaseClient.from('setores').insert([{ nome: nomeSetor }]);
-        }
-      }
+  try {
+    // 1. Carregar Setores
+    const { data: resSetores, error: errSetores } = await supabaseClient.from('setores').select('*');
+    if (resSetores && resSetores.length > 0) {
+      setores = resSetores.map(s => s.nome);
+    } else {
+      setores = setoresIniciais;
+    }
 
-      // 2. Carregar Produtos
-      const { data: resProdutos } = await supabaseClient.from('produtos').select('*');
-      if (resProdutos && resProdutos.length > 0) {
-        produtos = resProdutos;
-      } else {
-        produtos = produtosBase;
-        // Salvar produtos iniciais na nuvem se a tabela estiver vazia
-        await supabaseClient.from('produtos').insert(produtosBase);
-      }
+    // 2. Carregar Produtos
+    const { data: resProdutos, error: errProdutos } = await supabaseClient.from('produtos').select('*');
+    if (resProdutos && resProdutos.length > 0) {
+      produtos = resProdutos;
+    } else {
+      produtos = produtosBase;
+    }
 
-      // 3. Carregar Solicitações
-      const { data: resSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
-      if (resSolicitacoes) {
-        solicitacoes = resSolicitacoes.map(s => ({
-          ...s,
-          numeroOficial: s.numero_oficial,
-          dataEnvio: s.data_envio
-        }));
-      }
+    // 3. Carregar Solicitações
+    const { data: resSolicitacoes, error: errSolicitacoes } = await supabaseClient.from('solicitacoes').select('*');
+    if (resSolicitacoes) {
+      solicitacoes = resSolicitacoes.map(s => ({
+        ...s,
+        numeroOficial: s.numero_oficial,
+        dataEnvio: s.data_envio
+      }));
+    }
+  } catch (error) {
+    console.error("Erro ao carregar dados do Supabase, utilizando dados locais de fallback:", error);
+    setores = setoresIniciais;
+    produtos = produtosBase;
+  }
 
-      renderSelectSetores();
-      renderTabelaSolicitante();
-      renderAprovacaoChef();
-      renderHistorico();
-      renderCadastros();
-      atualizarBadges();
+  renderSelectSetores();
+  renderTabelaSolicitante();
+  renderAprovacaoChef();
+  renderHistorico();
+  renderCadastros();
+  atualizarBadges();
     }
 
     function ativarSincronizacaoRealtime() {
