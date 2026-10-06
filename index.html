@@ -846,13 +846,12 @@
         input.addEventListener('input', function() {
           const tr = this.closest('tr');
           const preco = parseFloat(tr.dataset.preco) || 0;
-          const est = parseFloat(tr.querySelector('.input-est').value) || 0;
           const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
           
-          const totalCalculado = (hosp + ref + camb) - est;
-          const total = Math.max(0, totalCalculado);
+          // ALTERAÇÃO AQUI: Soma direta sem subtrair o estoque
+          const total = hosp + ref + camb;
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
           tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
         });
@@ -904,13 +903,12 @@
           const preco = parseFloat(tr.querySelector('.input-preco-extra').value) || 0;
           tr.dataset.preco = preco;
 
-          const est = parseFloat(tr.querySelector('.input-est').value) || 0;
           const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
           const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
           const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
 
-          const totalCalculado = (hosp + ref + camb) - est;
-          const total = Math.max(0, totalCalculado);
+          // ALTERAÇÃO AQUI: Soma direta sem subtrair o estoque
+          const total = hosp + ref + camb;
 
           tr.querySelector('.sol-total').textContent = total.toFixed(1);
           tr.querySelector('.sol-valor-total').textContent = (total * preco).toFixed(2);
