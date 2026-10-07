@@ -699,14 +699,21 @@
 
       const setor = document.getElementById('solSetor').value;
       const data = document.getElementById('solData').value;
-      const observacao = document.getElementById('solObs').value;
+      const observacaoBase = document.getElementById('solObs').value;
 
       if (!setor) {
         alert("Por favor, selecione um setor!");
         return;
       }
 
-      const itens = [];
+      // Agrupamento por destinação para divisão automática do pedido ao encerrar
+      const grupos = {
+        'HÓSPEDES': [],
+        'REFEITÓRIO': [],
+        'CAMBUSA': []
+      };
+
+      let validaExtra = true;
 
       document.querySelectorAll('#tbodySolicitante tr').forEach(tr => {
         const code = tr.dataset.code;
@@ -717,9 +724,8 @@
         const hosp = parseFloat(tr.querySelector('.input-hosp').value) || 0;
         const ref = parseFloat(tr.querySelector('.input-ref').value) || 0;
         const camb = parseFloat(tr.querySelector('.input-camb').value) || 0;
-        const total = parseFloat(tr.querySelector('.sol-total').textContent) || 0;
 
-        if (total > 0) {
+        if (hosp > 0 || ref > 0 || camb > 0) {
           let nomeItem = '';
           let unidadeItem = 'UN';
           let precoItem = 0;
@@ -728,7 +734,7 @@
             const inputNome = tr.querySelector('.input-nome-extra');
             nomeItem = inputNome ? inputNome.value.trim().toUpperCase() : '';
             if (!nomeItem) {
-              alert("Por favor, informe o nome para o item extra inserido!");
+              validaExtra = false;
               return;
             }
             nomeItem += " (EXTRA)";
@@ -743,41 +749,65 @@
             precoItem = prodObj ? (parseFloat(prodObj.preco) || 0) : 0;
           }
 
-          itens.push({
-            code: code,
-            nome: nomeItem,
-            unidade: unidadeItem,
-            preco: precoItem,
-            estoque: est,
-            hospedes: hosp,
-            refeitorio: ref,
-            cambusa: camb,
-            qtdPedida: total,
-            qtdAprovada: total
-          });
+          if (hosp > 0) {
+            grupos['HÓSPEDES'].push({
+              code, nome: nomeItem, unidade: unidadeItem, preco: precoItem,
+              estoque: est, hospedes: hosp, refeitorio: 0, cambusa: 0,
+              qtdPedida: hosp, qtdAprovada: hosp
+            });
+          }
+          if (ref > 0) {
+            grupos['REFEITÓRIO'].push({
+              code, nome: nomeItem, unidade: unidadeItem, preco: precoItem,
+              estoque: est, hospedes: 0, refeitorio: ref, cambusa: 0,
+              qtdPedida: ref, qtdAprovada: ref
+            });
+          }
+          if (camb > 0) {
+            grupos['CAMBUSA'].push({
+              code, nome: nomeItem, unidade: unidadeItem, preco: precoItem,
+              estoque: est, hospedes: 0, refeitorio: 0, cambusa: camb,
+              qtdPedida: camb, qtdAprovada: camb
+            });
+          }
         }
       });
 
-      if (itens.length === 0) {
+      if (!validaExtra) {
+        alert("Por favor, informe o nome para o item extra inserido!");
+        return;
+      }
+
+      const destinacoesComItens = Object.keys(grupos).filter(d => grupos[d].length > 0);
+
+      if (destinacoesComItens.length === 0) {
         alert("Selecione pelo menos um item com quantidade solicitada maior que zero!");
         return;
       }
 
-      const novaSolicitacao = {
-        id: 'REQ-' + Date.now(),
-        numeroOficial: '',
-        setor: setor,
-        data: data,
-        observacao: observacao,
-        status: 'PENDENTE',
-        dataEnvio: new Date().toLocaleString('pt-BR'),
-        itens: itens
-      };
+      let timestampBase = Date.now();
+      for (let i = 0; i < destinacoesComItens.length; i++) {
+        const dest = destinacoesComItens[i];
+        const itensDest = grupos[dest];
+        const obsFinal = `[DESTINO: ${dest}] ${observacaoBase}`.trim();
 
-      await salvarSolicitacaoNuvem(novaSolicitacao);
+        const novaSolicitacao = {
+          id: 'REQ-' + (timestampBase + i),
+          numeroOficial: '',
+          setor: `${setor} - ${dest}`,
+          data: data,
+          observacao: obsFinal,
+          status: 'PENDENTE',
+          dataEnvio: new Date().toLocaleString('pt-BR'),
+          itens: itensDest
+        };
+
+        await salvarSolicitacaoNuvem(novaSolicitacao);
+      }
+
       await carregarDadosNuvem();
 
-      alert("Requisição enviada com sucesso ao Chef para aprovação!");
+      alert(`Requisição finalizada! Foram gerados ${destinacoesComItens.length} pedido(s) divididos por destinação (${destinacoesComItens.join(', ')}) e enviados ao Chef.`);
 
       this.reset();
       renderTabelaSolicitante();
@@ -926,7 +956,7 @@
       const fStatus = document.getElementById('filtroHistStatus').value;
 
       let filtrados = solicitacoes.filter(s => {
-        const matchSetor = fSetor ? s.setor === fSetor : true;
+        const matchSetor = fSetor ? s.setor.includes(fSetor) : true;
         const matchStatus = fStatus ? s.status === fStatus : true;
         return matchSetor && matchStatus;
       });
@@ -1078,7 +1108,7 @@
 
       let reqsFiltradas = solicitacoes.filter(req => {
         const reqData = new Date(req.data + 'T00:00:00');
-        if (setorFiltro && req.setor !== setorFiltro) return false;
+        if (setorFiltro && !req.setor.includes(setorFiltro)) return false;
 
         if (periodo === 'mes') {
           return reqData.getMonth() === mesAtual && reqData.getFullYear() === anoAtual;
