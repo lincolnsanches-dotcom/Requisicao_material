@@ -447,6 +447,7 @@
     let setores = [];
     let produtos = [];
     let solicitacoes = [];
+    let cardsAbertos = new Set();
 
     let chartEvolucao = null;
     let chartSetores = null;
@@ -550,7 +551,6 @@
       };
 
       await supabaseClient.from('solicitacoes').upsert([payload]);
-      await carregarDadosNuvem();
     }
 
     function renderSelectSetores() {
@@ -775,6 +775,7 @@
       };
 
       await salvarSolicitacaoNuvem(novaSolicitacao);
+      await carregarDadosNuvem();
 
       alert("Requisição enviada com sucesso ao Chef para aprovação!");
 
@@ -795,7 +796,9 @@
 
       pendentes.forEach(req => {
         const card = document.createElement('div');
-        card.className = 'req-card border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white transition';
+        const estaAberto = cardsAbertos.has(req.id);
+        card.className = `req-card border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white transition ${estaAberto ? 'open' : ''}`;
+        card.dataset.reqId = req.id;
 
         let itensHTML = '';
         let totalEstimadoReq = 0;
@@ -871,7 +874,15 @@
 
     function toggleAccordion(headerElement) {
       const card = headerElement.closest('.req-card');
+      const reqId = card.dataset.reqId;
       card.classList.toggle('open');
+      if (reqId) {
+        if (card.classList.contains('open')) {
+          cardsAbertos.add(reqId);
+        } else {
+          cardsAbertos.delete(reqId);
+        }
+      }
     }
 
     async function atualizarQtdAprovada(reqId, itemIndex, valor) {
@@ -901,7 +912,9 @@
       const req = solicitacoes.find(s => s.id === reqId);
       if (req) {
         req.status = novoStatus;
+        cardsAbertos.delete(reqId);
         await salvarSolicitacaoNuvem(req);
+        await carregarDadosNuvem();
       }
     }
 
@@ -1024,6 +1037,7 @@
         req.numeroOficial = valorNum;
         req.status = 'CONCLUIDO';
         await salvarSolicitacaoNuvem(req);
+        await carregarDadosNuvem();
       }
     }
 
